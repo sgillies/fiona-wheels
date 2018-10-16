@@ -1,3 +1,11 @@
+Changes
+=======
+
+1.0.1 (2018-10-16)
+------------------
+
+* Patch GDAL 2.3.2 to fully surface AWS error messages.
+
 1.0.0 (2018-10-11)
 ------------------
 
