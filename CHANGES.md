@@ -1,6 +1,11 @@
 Changes
 =======
 
+1.0.2 (2018-10-31)
+------------------
+
+* Downgrade curl to 7.54, which is more stable in combination with GDAL 2.3.2.
+
 1.0.1 (2018-10-16)
 ------------------
 
