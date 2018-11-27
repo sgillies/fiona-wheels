@@ -238,6 +238,7 @@ function pre_build {
 
 
 function run_tests {
+    unset GDAL_DATA
     unset PROJ_LIB
     if [ -n "$IS_OSX" ]; then
         export PATH=$PATH:${BUILD_PREFIX}/bin
@@ -248,7 +249,7 @@ function run_tests {
         export LANG=C.UTF-8
         export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
         sudo apt-get update
-        sudo apt-get install -y gdal-bin ca-certificates
+        sudo apt-get install -y ca-certificates
     fi
     cd ../Fiona
     mkdir -p /tmp/Fiona
