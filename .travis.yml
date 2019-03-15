@@ -13,7 +13,7 @@ cache:
 env:
   global:
   - REPO_DIR=Fiona
-  - BUILD_COMMIT=cf05cae
+  - BUILD_COMMIT=1.8.5
   - PLAT=x86_64
   - UNICODE_WIDTH=32
   - USE_CCACHE=1
