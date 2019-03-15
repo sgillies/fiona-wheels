@@ -13,7 +13,7 @@ cache:
 env:
   global:
   - REPO_DIR=Fiona
-  - BUILD_COMMIT=1.8.4
+  - BUILD_COMMIT=cf05cae
   - PLAT=x86_64
   - UNICODE_WIDTH=32
   - USE_CCACHE=1
@@ -96,8 +96,8 @@ matrix:
 
 before_install:
     - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
-    - BUILD_DEPENDS="$NP_BUILD_DEP cython==0.28.3 wheel==0.31.1"
-    - TEST_DEPENDS="$NP_TEST_DEP pytest boto3 packaging hypothesis wheel==0.31.1 $GEN_DEPS"
+    - BUILD_DEPENDS="$NP_BUILD_DEP cython==0.29.5 wheel==0.31.1"
+    - TEST_DEPENDS="$NP_TEST_DEP pytest==4.0.2 boto3 packaging hypothesis wheel==0.31.1 $GEN_DEPS"
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
     - before_install
