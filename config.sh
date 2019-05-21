@@ -4,7 +4,7 @@
 
 
 function build_geos {
-    MAKEFLAGS="-j 4" build_simple geos $GEOS_VERSION https://download.osgeo.org/geos tar.bz2
+    build_simple geos $GEOS_VERSION https://download.osgeo.org/geos tar.bz2
 }
 
 
