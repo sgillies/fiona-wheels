@@ -131,34 +131,8 @@ function build_tiff {
 #}
 
 
-function build_bundled_deps {
-    #if [ -n "$IS_OSX" ]; then
-    #    curl -fsSL -o /tmp/deps.zip https://github.com/sgillies/rasterio-wheels/files/2350174/gdal-deps.zip
-    #    (cd / && sudo unzip -o /tmp/deps.zip)
-    #    /gdal/bin/nc-config --libs
-    #    touch geos-stamp && touch hdf5-stamp && touch netcdf-stamp
-    #else
-    start_spinner
-    suppress build_geos
-    suppress build_hdf5
-    suppress build_netcdf
-    stop_spinner
-    #fi
-}
-
-
 function build_gdal {
     if [ -e gdal-stamp ]; then return; fi
-    build_jpeg
-    build_tiff
-    build_libpng
-    build_openjpeg
-    build_jsonc
-    build_proj
-    build_sqlite
-    build_curl
-    build_expat
-    build_bundled_deps
 
     if [ -n "$IS_OSX" ]; then
         EXPAT_PREFIX=/usr
@@ -217,19 +191,20 @@ function pre_build {
     #    build_new_zlib
     #fi
 
-    build_bundled_deps
-
     build_curl
+    build_sqlite
+    build_jsonc
 
     start_spinner
     suppress build_jpeg
     suppress build_tiff
     suppress build_libpng
     suppress build_openjpeg
-    suppress build_jsonc
     suppress build_proj
-    suppress build_sqlite
     suppress build_expat
+    suppress build_geos
+    suppress build_hdf5
+    suppress build_netcdf
     stop_spinner
 
     build_gdal
