@@ -94,41 +94,41 @@ function build_tiff {
 }
 
 
-function build_hdf5 {
-    if [ -e hdf5-stamp ]; then return; fi
-    build_zlib
-    # libaec is a drop-in replacement for szip
-    build_libaec
-    local hdf5_url=https://support.hdfgroup.org/ftp/HDF5/releases
-    local short=$(echo $HDF5_VERSION | awk -F "." '{printf "%d.%d", $1, $2}')
-    fetch_unpack $hdf5_url/hdf5-$short/hdf5-$HDF5_VERSION/src/hdf5-$HDF5_VERSION.tar.gz
-    (cd hdf5-$HDF5_VERSION \
-        && ./configure --enable-shared --enable-build-mode=production --with-szlib=$BUILD_PREFIX --prefix=$BUILD_PREFIX \
-        && make -j4 \
-        && make install)
-    touch hdf5-stamp
-}
+#function build_hdf5 {
+#    if [ -e hdf5-stamp ]; then return; fi
+#    build_zlib
+#    # libaec is a drop-in replacement for szip
+#    build_libaec
+#    local hdf5_url=https://support.hdfgroup.org/ftp/HDF5/releases
+#    local short=$(echo $HDF5_VERSION | awk -F "." '{printf "%d.%d", $1, $2}')
+#    fetch_unpack $hdf5_url/hdf5-$short/hdf5-$HDF5_VERSION/src/hdf5-$HDF5_VERSION.tar.gz
+#    (cd hdf5-$HDF5_VERSION \
+#        && ./configure --enable-shared --enable-build-mode=production --with-szlib=$BUILD_PREFIX --prefix=$BUILD_PREFIX \
+#        && make -j4 \
+#        && make install)
+#    touch hdf5-stamp
+#}
 
 
-function build_curl {
-    if [ -e curl-stamp ]; then return; fi
-    local flags="--prefix=$BUILD_PREFIX"
-    if [ -n "$IS_OSX" ]; then
-        return
-        # flags="$flags --with-darwinssl"
-    else  # manylinux
-        flags="$flags --with-ssl"
-        build_openssl
-    fi
-    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
-    (cd curl-${CURL_VERSION} \
-        && if [ -z "$IS_OSX" ]; then \
-        LIBS=-ldl ./configure $flags; else \
-        ./configure $flags; fi\
-        && make -j4 CFLAGS=-Wno-error \
-        && make install)
-    touch curl-stamp
-}
+#function build_curl {
+#    if [ -e curl-stamp ]; then return; fi
+#    local flags="--prefix=$BUILD_PREFIX"
+#    if [ -n "$IS_OSX" ]; then
+#        return
+#        # flags="$flags --with-darwinssl"
+#    else  # manylinux
+#        flags="$flags --with-ssl"
+#        build_openssl
+#    fi
+#    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
+#    (cd curl-${CURL_VERSION} \
+#        && if [ -z "$IS_OSX" ]; then \
+#        LIBS=-ldl ./configure $flags; else \
+#        ./configure $flags; fi\
+#        && make -j4 CFLAGS=-Wno-error \
+#        && make install)
+#    touch curl-stamp
+#}
 
 
 function build_bundled_deps {
@@ -156,7 +156,7 @@ function build_gdal {
     build_jsonc
     build_proj
     build_sqlite
-    # build_curl
+    build_curl
     build_expat
     build_bundled_deps
 
@@ -219,7 +219,7 @@ function pre_build {
 
     build_bundled_deps
 
-    # build_curl
+    build_curl
 
     start_spinner
     suppress build_jpeg
