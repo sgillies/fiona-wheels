@@ -4,6 +4,8 @@
 
 
 function build_geos {
+    CFLAGS="$CFLAGS -g -O2"
+    CXXFLAGS="$CXXFLAGS -g -O2"
     build_simple geos $GEOS_VERSION https://download.osgeo.org/geos tar.bz2
 }
 
@@ -15,6 +17,8 @@ function build_jsonc {
 
 function build_proj {
     if [ -e proj-stamp ]; then return; fi
+    CFLAGS="$CFLAGS -g -O2"
+    CXXFLAGS="$CXXFLAGS -g -O2"
     fetch_unpack http://download.osgeo.org/proj/proj-${PROJ_VERSION}.tar.gz
     (cd proj-${PROJ_VERSION} \
         && patch -u -p1 < ../patches/bd6cf7d527ec88fdd6cc3f078387683d683d0445.diff \
@@ -27,6 +31,8 @@ function build_proj {
 
 function build_sqlite {
     if [ -e sqlite-stamp ]; then return; fi
+    CFLAGS="$CFLAGS -g -O2"
+    CXXFLAGS="$CXXFLAGS -g -O2"
     fetch_unpack https://www.sqlite.org/2018/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
     (cd sqlite-autoconf-${SQLITE_VERSION} \
         && ./configure --prefix=$BUILD_PREFIX \
@@ -38,6 +44,8 @@ function build_sqlite {
 
 function build_expat {
     if [ -e expat-stamp ]; then return; fi
+    CFLAGS="$CFLAGS -g -O2"
+    CXXFLAGS="$CXXFLAGS -g -O2"
     if [ -n "$IS_OSX" ]; then
         :
     else
@@ -113,6 +121,8 @@ function build_hdf5 {
 function build_curl {
     if [ -e curl-stamp ]; then return; fi
     local flags="--prefix=$BUILD_PREFIX"
+    CFLAGS="$CFLAGS -g -O2"
+    CXXFLAGS="$CXXFLAGS -g -O2"
     if [ -n "$IS_OSX" ]; then
         return
         # flags="$flags --with-darwinssl"
@@ -140,8 +150,8 @@ function build_bundled_deps {
     else
         start_spinner
         suppress build_geos
-        suppress build_hdf5
-        suppress build_netcdf
+#        suppress build_hdf5
+#        suppress build_netcdf
         stop_spinner
     fi
 }
@@ -152,13 +162,16 @@ function build_gdal {
     build_jpeg
     build_tiff
     build_libpng
-    build_openjpeg
+#    build_openjpeg
     build_jsonc
     build_proj
     build_sqlite
     build_curl
     build_expat
     build_bundled_deps
+
+    CFLAGS="$CFLAGS -g -O2"
+    CXXFLAGS="$CXXFLAGS -g -O2"
 
     if [ -n "$IS_OSX" ]; then
         EXPAT_PREFIX=/usr
@@ -170,8 +183,9 @@ function build_gdal {
 
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
-        && patch -p2 < ../patches/340ad0d703534a256ec3de94176c95b0cf20cbd4.diff \
         && ./configure \
+            --with-crypto=yes \
+            --with-hide-internal-symbols \
             --prefix=$BUILD_PREFIX \
             --with-threads \
             --disable-debug \
@@ -206,6 +220,11 @@ function build_gdal {
             --with-curl=curl-config \
         && make -j4 \
         && make install)
+        if [ -n "$IS_OSX" ]; then
+            :
+        else
+            strip -v --strip-unneeded ${BUILD_PREFIX}/lib/libgdal.so.*
+        fi
     touch gdal-stamp
 }
 
@@ -226,7 +245,7 @@ function pre_build {
     suppress build_jpeg
     suppress build_tiff
     suppress build_libpng
-    suppress build_openjpeg
+#    suppress build_openjpeg
     suppress build_jsonc
     suppress build_proj
     suppress build_sqlite

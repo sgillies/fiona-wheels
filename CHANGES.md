@@ -1,6 +1,13 @@
 Changes
 =======
 
+1.1
+---
+
+* GDAL 2.4.2
+* Python 3.4 wheels are removed
+* Cython 0.29.5
+
 1.0.2 (2018-10-31)
 ------------------
 
