@@ -31,8 +31,6 @@ function build_proj {
 
 function build_sqlite {
     if [ -e sqlite-stamp ]; then return; fi
-    CFLAGS="$CFLAGS -g -O2"
-    CXXFLAGS="$CXXFLAGS -g -O2"
     fetch_unpack https://www.sqlite.org/2018/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
     (cd sqlite-autoconf-${SQLITE_VERSION} \
         && ./configure --prefix=$BUILD_PREFIX \
