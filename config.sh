@@ -57,70 +57,23 @@ function build_expat {
 }
 
 
-function get_cmake {
-    local cmake=cmake
-    if [ -n "$IS_OSX" ]; then
-        brew install cmake > /dev/null
-    else
-        fetch_unpack https://www.cmake.org/files/v3.12/cmake-3.12.1.tar.gz > /dev/null
-        (cd cmake-3.12.1 \
-            && ./bootstrap --prefix=$BUILD_PREFIX > /dev/null \
-            && make -j4 > /dev/null \
-            && make install > /dev/null)
-        cmake=/usr/local/bin/cmake
-    fi
-    echo $cmake
-}
-
-
-function build_openjpeg {
-    if [ -e openjpeg-stamp ]; then return; fi
-    build_zlib
-    build_libpng
-    build_tiff
-    build_lcms2
-    local cmake=$(get_cmake)
-    local archive_prefix="v"
-    if [ $(lex_ver $OPENJPEG_VERSION) -lt $(lex_ver 2.1.1) ]; then
-        archive_prefix="version."
-    fi
-    local out_dir=$(fetch_unpack https://github.com/uclouvain/openjpeg/archive/${archive_prefix}${OPENJPEG_VERSION}.tar.gz)
-    (cd $out_dir \
-        && $cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$BUILD_PREFIX . \
+function build_nghttp2 {
+    if [ -e nghttp2-stamp ]; then return; fi
+    fetch_unpack https://github.com/nghttp2/nghttp2/releases/download/v${NGHTTP2_VERSION}/nghttp2-${NGHTTP2_VERSION}.tar.gz
+    (cd nghttp2-${NGHTTP2_VERSION}  \
+        && ./configure --enable-lib-only --prefix=$BUILD_PREFIX \
         && make -j4 \
         && make install)
-    touch openjpeg-stamp
-}
-
-
-function build_tiff {
-    build_zlib
-    build_jpeg
-    build_simple tiff $TIFF_VERSION https://download.osgeo.org/libtiff
-}
-
-
-function build_hdf5 {
-    if [ -e hdf5-stamp ]; then return; fi
-    build_zlib
-    # libaec is a drop-in replacement for szip
-    build_libaec
-    local hdf5_url=https://support.hdfgroup.org/ftp/HDF5/releases
-    local short=$(echo $HDF5_VERSION | awk -F "." '{printf "%d.%d", $1, $2}')
-    fetch_unpack $hdf5_url/hdf5-$short/hdf5-$HDF5_VERSION/src/hdf5-$HDF5_VERSION.tar.gz
-    (cd hdf5-$HDF5_VERSION \
-        && ./configure --enable-shared --enable-build-mode=production --with-szlib=$BUILD_PREFIX --prefix=$BUILD_PREFIX \
-        && make -j4 \
-        && make install)
-    touch hdf5-stamp
+    touch nghttp2-stamp
 }
 
 
 function build_curl {
     if [ -e curl-stamp ]; then return; fi
-    local flags="--prefix=$BUILD_PREFIX"
     CFLAGS="$CFLAGS -g -O2"
     CXXFLAGS="$CXXFLAGS -g -O2"
+    build_nghttp2
+    local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX"
     if [ -n "$IS_OSX" ]; then
         return
         # flags="$flags --with-darwinssl"
@@ -128,12 +81,12 @@ function build_curl {
         flags="$flags --with-ssl"
         build_openssl
     fi
-    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
+#    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
     (cd curl-${CURL_VERSION} \
         && if [ -z "$IS_OSX" ]; then \
         LIBS=-ldl ./configure $flags; else \
         ./configure $flags; fi\
-        && make -j4 CFLAGS=-Wno-error \
+        && make -j4 \
         && make install)
     touch curl-stamp
 }
@@ -148,8 +101,6 @@ function build_bundled_deps {
     else
         start_spinner
         suppress build_geos
-#        suppress build_hdf5
-#        suppress build_netcdf
         stop_spinner
     fi
 }
@@ -158,9 +109,7 @@ function build_bundled_deps {
 function build_gdal {
     if [ -e gdal-stamp ]; then return; fi
     build_jpeg
-    build_tiff
     build_libpng
-#    build_openjpeg
     build_jsonc
     build_proj
     build_sqlite
@@ -197,7 +146,7 @@ function build_gdal {
             --with-freexl=no \
             --with-netcdf=${DEPS_PREFIX} \
             --with-openjpeg=${BUILD_PREFIX} \
-            --with-libtiff=${BUILD_PREFIX}/tiff \
+            --with-libtiff=internal \
             --with-jpeg \
             --with-gif \
             --with-png \
@@ -216,6 +165,41 @@ function build_gdal {
             --with-libiconv-prefix=/usr \
             --with-libz=/usr \
             --with-curl=curl-config \
+            --without-hdf4 \
+            --without-hdf5 \
+            --without-netcdf \
+            --without-openjpeg \
+            --without-bsb \
+            --without-cfitsio \
+            --without-dwgdirect \
+            --without-ecw \
+            --without-fme \
+            --without-freexl \
+            --without-gnm \
+            --without-grass \
+            --without-ingres \
+            --without-jasper \
+		    --without-jp2mrsid \
+			--without-jpeg12 \
+			--without-kakadu \
+			--without-libgrass \
+			--without-libgrass \
+			--without-libkml \
+			--without-mrf \
+			--without-mrsid \
+			--without-mysql \
+			--without-odbc \
+			--without-ogdi \
+		    --without-pcidsk \
+			--without-pcraster \
+			--without-perl \
+			--without-pg \
+			--without-php \
+			--without-python \
+			--without-qhull \
+			--without-sde \
+			--without-xerces \
+			--without-xml2 \
         && make -j4 \
         && make install)
         if [ -n "$IS_OSX" ]; then
@@ -235,22 +219,29 @@ function pre_build {
     #    build_new_zlib
     #fi
 
-    build_bundled_deps
+    suppress build_nghttp2
+    if [ -n "$IS_OSX" ]; then
+	:
+    else  # manylinux
+        suppress build_openssl
+    fi
 
-    build_curl
+    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
 
-    start_spinner
+    # Remove previously installed curl.
+    rm -rf /usr/local/lib/libcurl*
+
+    suppress build_curl
+
     suppress build_jpeg
-    suppress build_tiff
-    suppress build_libpng
-#    suppress build_openjpeg
     suppress build_jsonc
     suppress build_proj
     suppress build_sqlite
     suppress build_expat
-    stop_spinner
 
-    build_gdal
+    suppress build_bundled_deps
+
+    suppress build_gdal
 }
 
 
