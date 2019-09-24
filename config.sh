@@ -31,11 +31,15 @@ function build_proj {
 
 function build_sqlite {
     if [ -e sqlite-stamp ]; then return; fi
-    fetch_unpack https://www.sqlite.org/2018/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
-    (cd sqlite-autoconf-${SQLITE_VERSION} \
-        && ./configure --prefix=$BUILD_PREFIX \
-        && make -j4 \
-        && make install)
+    if [ -n "$IS_OSX" ]; then
+        :
+    else
+        fetch_unpack https://www.sqlite.org/2018/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
+        (cd sqlite-autoconf-${SQLITE_VERSION} \
+            && ./configure --prefix=$BUILD_PREFIX \
+            && make -j4 \
+            && make install)
+    fi
     touch sqlite-stamp
 }
 
@@ -129,44 +133,29 @@ function build_gdal {
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
         && ./configure \
-            --with-crypto=yes \
-            --with-hide-internal-symbols \
-            --prefix=$BUILD_PREFIX \
-            --with-threads \
             --disable-debug \
             --disable-static \
-            --without-grass \
-            --without-libgrass \
-            --without-jpeg12 \
-            --without-jasper \
-            --without-bsb \
-            --without-python \
-            --with-freexl=no \
+            --prefix=$BUILD_PREFIX \
+            --with-crypto=yes \
+            --with-curl=curl-config \
+            --with-expat=${EXPAT_PREFIX} \
+            --with-geos=${DEPS_PREFIX}/bin/geos-config \
+            --with-geotiff=internal \
+            --with-gif \
+            --with-grib \
+            --with-hide-internal-symbols \
+            --with-jpeg \
+            --with-libiconv-prefix=/usr \
+            --with-libjson-c=${BUILD_PREFIX} \
+            --with-libtiff=internal \
+            --with-libz=/usr \
             --with-netcdf=${DEPS_PREFIX} \
             --with-openjpeg=${BUILD_PREFIX} \
-            --with-libtiff=internal \
-            --with-jpeg \
-            --with-gif \
-            --with-png \
-            --with-geotiff=internal \
-            --with-sqlite3=${BUILD_PREFIX}/sqlite \
-            --with-pcraster=no \
-            --with-pcidsk=no \
-            --with-sfcgal=no \
-            --with-pg=no \
-            --with-grib \
             --with-pam \
-            --with-geos=${DEPS_PREFIX}/bin/geos-config \
-            --with-proj=${BUILD_PREFIX}/proj4 \
-            --with-expat=${EXPAT_PREFIX} \
-            --with-libjson-c=${BUILD_PREFIX} \
-            --with-libiconv-prefix=/usr \
-            --with-libz=/usr \
-            --with-curl=curl-config \
-            --without-hdf4 \
-            --without-hdf5 \
-            --without-netcdf \
-            --without-openjpeg \
+            --with-png \
+            --with-proj=${BUILD_PREFIX} \
+            --with-sqlite3=${SQLITE_PREFIX} \
+            --with-threads \
             --without-bsb \
             --without-cfitsio \
             --without-dwgdirect \
@@ -175,29 +164,33 @@ function build_gdal {
             --without-freexl \
             --without-gnm \
             --without-grass \
+            --without-hdf4 \
+            --without-hdf5 \
             --without-ingres \
             --without-jasper \
-		    --without-jp2mrsid \
-			--without-jpeg12 \
-			--without-kakadu \
-			--without-libgrass \
-			--without-libgrass \
-			--without-libkml \
-			--without-mrf \
-			--without-mrsid \
-			--without-mysql \
-			--without-odbc \
-			--without-ogdi \
-		    --without-pcidsk \
-			--without-pcraster \
-			--without-perl \
-			--without-pg \
-			--without-php \
-			--without-python \
-			--without-qhull \
-			--without-sde \
-			--without-xerces \
-			--without-xml2 \
+            --without-jp2mrsid \
+            --without-jpeg12 \
+            --without-kakadu \
+            --without-libgrass \
+            --without-libkml \
+            --without-mrf \
+            --without-mrsid \
+            --without-mysql \
+            --without-netcdf \
+            --without-odbc \
+            --without-ogdi \
+            --without-openjpeg \
+            --without-pcidsk \
+            --without-pcraster \
+            --without-perl \
+            --without-pg \
+            --without-php \
+            --without-python \
+            --without-qhull \
+            --without-sde \
+            --without-sfcgal \
+            --without-xerces \
+            --without-xml2 \
         && make -j4 \
         && make install)
         if [ -n "$IS_OSX" ]; then
