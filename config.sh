@@ -152,7 +152,7 @@ function build_gdal {
             --with-pam \
             --with-png \
             --with-proj=${BUILD_PREFIX} \
-            --with-sqlite3=${SQLITE_PREFIX} \
+            --with-sqlite3=${BUILD_PREFIX} \
             --with-threads \
             --without-bsb \
             --without-cfitsio \
