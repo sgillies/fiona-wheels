@@ -130,6 +130,8 @@ function build_gdal {
         DEPS_PREFIX=$BUILD_PREFIX
     fi
 
+    LDFLAGS="-L$DEPS_PREFIX/lib -L$BUILD_PREFIX/lib"
+
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
         && ./configure \
