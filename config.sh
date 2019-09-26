@@ -31,8 +31,6 @@ function build_proj {
 
 function build_sqlite {
     if [ -e sqlite-stamp ]; then return; fi
-    if [ -n "$IS_OSX" ]; then
-        :
     else
         fetch_unpack https://www.sqlite.org/2018/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
         (cd sqlite-autoconf-${SQLITE_VERSION} \
