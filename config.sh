@@ -130,6 +130,7 @@ function build_gdal {
 
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
+        && patch -u -p2 < ../patches/gdal-pr-2012.diff \
         && ./configure \
             --disable-debug \
             --disable-static \
@@ -230,7 +231,7 @@ function pre_build {
 
     suppress build_bundled_deps
 
-    suppress build_gdal
+#    suppress build_gdal
 }
 
 
@@ -278,9 +279,9 @@ function build_wheel_cmd {
     start_spinner
     if [ -n "$(is_function "pre_build")" ]; then pre_build; fi
     stop_spinner
-    if [ -n "$BUILD_DEPENDS" ]; then
-        pip install $(pip_opts) $BUILD_DEPENDS
-    fi
-    (cd $repo_dir && $cmd $wheelhouse)
-    repair_wheelhouse $wheelhouse
+#    if [ -n "$BUILD_DEPENDS" ]; then
+#        pip install $(pip_opts) $BUILD_DEPENDS
+#    fi
+#    (cd $repo_dir && $cmd $wheelhouse)
+#    repair_wheelhouse $wheelhouse
 }
