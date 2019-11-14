@@ -1,25 +1,32 @@
 Changes
 =======
 
-1.1
----
+2019-11-13
+----------
+
+* GDAL version 2.4.3 with patch from https://github.com/OSGeo/gdal/pull/2012.
+* Cython 0.29.14
+
+2019-09-23
+----------
 
 * GDAL 2.4.2
 * Python 3.4 wheels are removed
 * Cython 0.29.5
+* Libraries are compiled with -O2 and are stripped.
 
-1.0.2 (2018-10-31)
-------------------
+2018-10-31
+----------
 
 * Downgrade curl to 7.54, which is more stable in combination with GDAL 2.3.2.
 
-1.0.1 (2018-10-16)
-------------------
+2018-10-16
+----------
 
 * Patch GDAL 2.3.2 to fully surface AWS error messages.
 
-1.0.0 (2018-10-11)
-------------------
+2018-10-11
+----------
 
 * Multibuild commit is 548ebc8
 * GEOS version 3.6.2
