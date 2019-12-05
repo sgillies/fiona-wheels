@@ -1,6 +1,11 @@
 Changes
 =======
 
+2019-12-04
+----------
+
+* Update multibuild to 4491026 for Python 3.8 support.
+
 2019-11-13
 ----------
 
