@@ -13,8 +13,7 @@ Changes
 * Add 64-bit manylinux1 and macosx Python 3.8 builds.
 * Build GEOS for OS X instead of using pre-built versions.
 
-2019-12-04
-----------
+## 2019-12-04
 
 * Update multibuild commit to 4491026 for Python 3.8 support.
 
