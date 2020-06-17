@@ -1,11 +1,12 @@
 language: python
 python: 3.5
-sudo: required
-dist: xenial
+dist: trusty
 services: docker
 filter_secrets: false
+os: linux
 
 cache:
+  ccache: true
   directories:
   - $HOME/.ccache
   - $HOME/.cache/pip
@@ -23,7 +24,7 @@ addons:
     paths:
     - $(ls wheelhouse/*.whl)
 
-matrix:
+jobs:
   include:
   - name: "Python 2.7 x86_64 linux"
     os: linux
@@ -107,5 +108,4 @@ install:
     - unzip -l ${TRAVIS_BUILD_DIR}/wheelhouse/*.whl
 
 script:
-    - echo "pass"
     - install_run $PLAT
