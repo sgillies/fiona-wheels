@@ -120,6 +120,7 @@ function build_gdal {
 
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
+        && patch -u -p2 < ../patches/2310.diff \
         && ./configure \
             --disable-debug \
             --disable-static \
@@ -258,6 +259,14 @@ function build_wheel_cmd {
     #     WHEEL_SDIR  (optional, default "wheelhouse")
     #     BUILD_DEPENDS (optional, default "")
     #     MANYLINUX_URL (optional, default "") (via pip_opts function)
+
+    # Update the container's auditwheel with our patched version.
+    if [ -n "$IS_OSX" ]; then
+        :
+    else  # manylinux
+        /opt/python/cp37-cp37m/bin/pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
+    fi
+
     local cmd=${1:-pip_wheel_cmd}
     local repo_dir=${2:-$REPO_DIR}
     [ -z "$repo_dir" ] && echo "repo_dir not defined" && exit 1
@@ -268,6 +277,6 @@ function build_wheel_cmd {
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
-    (cd $repo_dir && $cmd $wheelhouse)
+    (cd $repo_dir && PIP_NO_BUILD_ISOLATION=0 PIP_USE_PEP517=0 $cmd $wheelhouse)
     repair_wheelhouse $wheelhouse
 }
