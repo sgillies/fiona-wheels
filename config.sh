@@ -232,7 +232,8 @@ function run_tests {
         sudo apt-get update
         sudo apt-get install -y ca-certificates
     fi
-    python -m pytest -vv ../Fiona/tests -k "not test_collection_zip_http"
+    cp -R ../Fiona/tests ./tests
+    python -m pytest -vv tests -k "not test_collection_zip_http"
     fio --version
     fio env --formats
     pip install shapely && python ../test_fiona_issue383.py
