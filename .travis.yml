@@ -1,11 +1,12 @@
 language: python
 python: 3.5
-sudo: required
 dist: trusty
 services: docker
 filter_secrets: false
+os: linux
 
 cache:
+  ccache: true
   directories:
   - $HOME/.ccache
   - $HOME/.cache/pip
@@ -23,10 +24,7 @@ addons:
     paths:
     - $(ls wheelhouse/*.whl)
 
-matrix:
-  exclude:
-  - python: 3.5
-
+jobs:
   include:
   - name: "Python 2.7 x86_64 linux"
     os: linux
@@ -58,13 +56,6 @@ matrix:
     - MB_PYTHON_VERSION=3.8
     - NP_BUILD_DEP=numpy==1.17.3
     - NP_TEST_DEP=numpy==1.17.3
-  - name: "Python 2.7 osx"
-    os: osx
-    language: generic
-    env:
-    - MB_PYTHON_VERSION=2.7
-    - NP_BUILD_DEP=numpy==1.10.4
-    - NP_TEST_DEP=numpy==1.11.3
   - name: "Python 3.5 osx"
     os: osx
     language: generic
@@ -97,8 +88,8 @@ matrix:
 
 before_install:
     - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
-    - BUILD_DEPENDS="$NP_BUILD_DEP cython==0.29.14 wheel==0.31.1"
-    - TEST_DEPENDS="$NP_TEST_DEP attrs==19.1.0 pytest==4.0.2 mock;python_version<'3.4' boto3 packaging hypothesis==4.38.1 wheel==0.31.1 $GEN_DEPS"
+    - BUILD_DEPENDS="$NP_BUILD_DEP cython==0.29.14 wheel==0.34.2"
+    - TEST_DEPENDS="$NP_TEST_DEP attrs==19.1.0 pytest==4.0.2 mock;python_version<'3.4' boto3 packaging hypothesis==4.38.1 wheel==0.34.2 $GEN_DEPS"
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
     - before_install
@@ -110,5 +101,4 @@ install:
     - unzip -l ${TRAVIS_BUILD_DIR}/wheelhouse/*.whl
 
 script:
-    - echo "pass"
     - install_run $PLAT

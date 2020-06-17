@@ -110,13 +110,11 @@ function build_gdal {
 
     if [ -n "$IS_OSX" ]; then
         EXPAT_PREFIX=/usr
-        DEPS_PREFIX=/gdal
     else
         EXPAT_PREFIX=$BUILD_PREFIX
-        DEPS_PREFIX=$BUILD_PREFIX
     fi
 
-    LDFLAGS="-L$DEPS_PREFIX/lib -L$BUILD_PREFIX/lib"
+    LDFLAGS="-L$BUILD_PREFIX/lib"
 
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
@@ -127,7 +125,7 @@ function build_gdal {
             --with-crypto=yes \
             --with-curl=curl-config \
             --with-expat=${EXPAT_PREFIX} \
-            --with-geos=${DEPS_PREFIX}/bin/geos-config \
+            --with-geos=${BUILD_PREFIX}/bin/geos-config \
             --with-geotiff=internal \
             --with-gif \
             --with-grib \
@@ -137,8 +135,6 @@ function build_gdal {
             --with-libjson-c=${BUILD_PREFIX} \
             --with-libtiff=internal \
             --with-libz=/usr \
-            --with-netcdf=${DEPS_PREFIX} \
-            --with-openjpeg=${BUILD_PREFIX} \
             --with-pam \
             --with-png \
             --with-proj=${BUILD_PREFIX} \
@@ -239,7 +235,7 @@ function run_tests {
     mkdir -p /tmp/Fiona
     cp -R tests /tmp/Fiona
     cd /tmp/Fiona
-    python -m pytest -vv tests
+    python -m pytest -vv tests -k "not test_collection_zip_http"
     fio --version
     fio env --formats
 }
