@@ -235,7 +235,7 @@ function run_tests {
     mkdir -p /tmp/Fiona
     cp -R tests /tmp/Fiona
     cd /tmp/Fiona
-    python -m pytest -vv tests
+    python -m pytest -vv tests -k "not test_collection_zip_http"
     fio --version
     fio env --formats
 }
