@@ -1,6 +1,15 @@
 Changes
 =======
 
+## 2020-06-18
+
+* Disable GEOS support in the GDAL library builds for OS X to prevent conflicts
+  with shapely wheels on PyPI (#17).
+* Test fiona and shapely wheels together to check for this conflict (#12).
+* Ensure that shared libraries in repaired wheels have a "fiona" tag in
+  SONAME to prevent conflicts with librairies in rasterio wheels (#13).
+* Patch GDAL to fix /vsis3 cache bug.
+
 ## 2019-01-27
 
 * Update multibuild commit to 6b0bbd5 for pip 20 support.
