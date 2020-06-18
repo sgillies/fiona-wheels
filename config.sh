@@ -110,8 +110,10 @@ function build_gdal {
 
     if [ -n "$IS_OSX" ]; then
         EXPAT_PREFIX=/usr
+        GEOS_CONFIG="--without-geos"
     else
         EXPAT_PREFIX=$BUILD_PREFIX
+        GEOS_CONFIG="--with-geos=${BUILD_PREFIX}/bin/geos-config"
     fi
 
     LDFLAGS="-L$BUILD_PREFIX/lib"
@@ -126,7 +128,7 @@ function build_gdal {
             --with-crypto=yes \
             --with-curl=curl-config \
             --with-expat=${EXPAT_PREFIX} \
-            --with-geos=${BUILD_PREFIX}/bin/geos-config \
+            ${GEOS_CONFIG} \
             --with-geotiff=internal \
             --with-gif \
             --with-grib \
