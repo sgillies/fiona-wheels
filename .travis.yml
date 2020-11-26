@@ -56,6 +56,12 @@ jobs:
     - MB_PYTHON_VERSION=3.8
     - NP_BUILD_DEP=numpy==1.17.3
     - NP_TEST_DEP=numpy==1.17.3
+  - name: amd64-Linux-Py39
+    os: linux
+    env:
+    - MB_PYTHON_VERSION=3.9
+    - NP_BUILD_DEP=numpy==1.19.1
+    - NP_TEST_DEP=numpy==1.19.1
   - name: "Python 3.5 osx"
     os: osx
     language: generic
