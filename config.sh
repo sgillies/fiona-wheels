@@ -238,7 +238,7 @@ function run_tests {
     python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions"
     fio --version
     fio env --formats
-    pip install shapely && python ../test_fiona_issue383.py
+    # pip install shapely && python ../test_fiona_issue383.py
 }
 
 
