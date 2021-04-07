@@ -1,5 +1,5 @@
 language: python
-python: 3.5
+python: 3.6
 dist: trusty
 services: docker
 filter_secrets: false
@@ -14,7 +14,7 @@ cache:
 env:
   global:
   - REPO_DIR=Fiona
-  - BUILD_COMMIT=fc7cda2
+  - BUILD_COMMIT=maint-1.8
   - PLAT=x86_64
   - UNICODE_WIDTH=32
   - USE_CCACHE=1
@@ -26,18 +26,6 @@ addons:
 
 jobs:
   include:
-  - name: "Python 2.7 x86_64 linux"
-    os: linux
-    env:
-    - MB_PYTHON_VERSION=2.7
-    - NP_BUILD_DEP=numpy==1.10.4
-    - NP_TEST_DEP=numpy==1.11.3
-  - name: "Python 3.5 x86_64 linux"
-    os: linux
-    env:
-    - MB_PYTHON_VERSION=3.5
-    - NP_BUILD_DEP=numpy==1.14.5
-    - NP_TEST_DEP=numpy==1.14.5
   - name: "Python 3.6 x86_64 linux"
     os: linux
     env:
@@ -56,15 +44,15 @@ jobs:
     - MB_PYTHON_VERSION=3.8
     - NP_BUILD_DEP=numpy==1.17.3
     - NP_TEST_DEP=numpy==1.17.3
-  - name: "Python 3.5 osx"
-    os: osx
-    language: generic
+  - name: "Python 3.9 x86_64 linux"
+    os: linux
     env:
-    - MB_PYTHON_VERSION=3.5
-    - NP_BUILD_DEP=numpy==1.14.5
-    - NP_TEST_DEP=numpy==1.14.5
+    - MB_PYTHON_VERSION=3.9
+    - NP_BUILD_DEP=numpy==1.19.4
+    - NP_TEST_DEP=numpy==1.19.4
   - name: "Python 3.6 osx"
     os: osx
+    osx_image: xcode9.3
     language: generic
     env:
     - MB_PYTHON_VERSION=3.6
@@ -72,18 +60,29 @@ jobs:
     - NP_TEST_DEP=numpy==1.14.5
   - name: "Python 3.7 osx"
     os: osx
+    osx_image: xcode9.3
     language: generic
     env:
     - MB_PYTHON_VERSION=3.7
     - NP_BUILD_DEP=numpy==1.14.5
     - NP_TEST_DEP=numpy==1.14.5
-  - os: osx
+  - name: "Python 3.8 osx"
+    os: osx
     language: generic
-    osx_image: xcode10.1
+    osx_image: xcode9.3
     env:
     - MB_PYTHON_VERSION=3.8
-    - NP_BUILD_DEP=numpy==1.17.3
-    - NP_TEST_DEP=numpy==1.17.3
+    - NP_BUILD_DEP=numpy==1.17.5
+    - NP_TEST_DEP=numpy==1.17.5
+    - MB_PYTHON_OSX_VER=10.9
+  - name: "Python 3.8 osx"
+    os: osx
+    language: generic
+    osx_image: xcode9.3
+    env:
+    - MB_PYTHON_VERSION=3.9
+    - NP_BUILD_DEP=numpy==1.19.4
+    - NP_TEST_DEP=numpy==1.19.4
     - MB_PYTHON_OSX_VER=10.9
 
 before_install:
