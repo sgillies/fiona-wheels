@@ -2,7 +2,6 @@
 #
 # Test for OSX with [ -n "$IS_OSX" ].
 
-
 function build_geos {
     CFLAGS="$CFLAGS -g -O2"
     CXXFLAGS="$CXXFLAGS -g -O2"
@@ -16,24 +15,26 @@ function build_jsonc {
 
 
 function build_proj {
-    if [ -e proj-stamp ]; then return; fi
     CFLAGS="$CFLAGS -g -O2"
     CXXFLAGS="$CXXFLAGS -g -O2"
+    if [ -e proj-stamp ]; then return; fi
     fetch_unpack http://download.osgeo.org/proj/proj-${PROJ_VERSION}.tar.gz
     (cd proj-${PROJ_VERSION} \
-        && curl -qq -O https://download.osgeo.org/proj/proj-datumgrid-${PROJ_DATUMGRID_VERSION}.zip \
-        && unzip proj-datumgrid-${PROJ_DATUMGRID_VERSION}.zip -d nad \
-        && patch -u -p1 < ../patches/bd6cf7d527ec88fdd6cc3f078387683d683d0445.diff \
         && ./configure --prefix=$BUILD_PREFIX \
         && make -j4 \
         && make install)
+    if [ -n "$IS_OSX" ]; then
+        :
+    else
+        strip -v --strip-unneeded ${BUILD_PREFIX}/lib/libproj.so.*
+    fi
     touch proj-stamp
 }
 
 
 function build_sqlite {
     if [ -e sqlite-stamp ]; then return; fi
-    fetch_unpack https://www.sqlite.org/2018/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
+    fetch_unpack https://www.sqlite.org/2020/sqlite-autoconf-${SQLITE_VERSION}.tar.gz
     (cd sqlite-autoconf-${SQLITE_VERSION} \
         && ./configure --prefix=$BUILD_PREFIX \
         && make -j4 \
@@ -44,8 +45,6 @@ function build_sqlite {
 
 function build_expat {
     if [ -e expat-stamp ]; then return; fi
-    CFLAGS="$CFLAGS -g -O2"
-    CXXFLAGS="$CXXFLAGS -g -O2"
     if [ -n "$IS_OSX" ]; then
         :
     else
@@ -96,12 +95,13 @@ function build_curl {
 
 function build_gdal {
     if [ -e gdal-stamp ]; then return; fi
+
+    build_curl
     build_jpeg
     build_libpng
     build_jsonc
     build_proj
     build_sqlite
-    build_curl
     build_expat
     build_geos
 
@@ -116,23 +116,20 @@ function build_gdal {
         GEOS_CONFIG="--with-geos=${BUILD_PREFIX}/bin/geos-config"
     fi
 
-    LDFLAGS="-L$BUILD_PREFIX/lib"
-
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
-        && patch -u -p2 < ../patches/2310.diff \
         && ./configure \
+	        --with-crypto=yes \
+	        --with-hide-internal-symbols \
             --disable-debug \
             --disable-static \
+	        --disable-driver-elastic \
             --prefix=$BUILD_PREFIX \
-            --with-crypto=yes \
             --with-curl=curl-config \
             --with-expat=${EXPAT_PREFIX} \
             ${GEOS_CONFIG} \
             --with-geotiff=internal \
             --with-gif \
-            --with-grib \
-            --with-hide-internal-symbols \
             --with-jpeg \
             --with-libiconv-prefix=/usr \
             --with-libjson-c=${BUILD_PREFIX} \
@@ -151,8 +148,6 @@ function build_gdal {
             --without-freexl \
             --without-gnm \
             --without-grass \
-            --without-hdf4 \
-            --without-hdf5 \
             --without-ingres \
             --without-jasper \
             --without-jp2mrsid \
@@ -163,10 +158,8 @@ function build_gdal {
             --without-mrf \
             --without-mrsid \
             --without-mysql \
-            --without-netcdf \
             --without-odbc \
             --without-ogdi \
-            --without-openjpeg \
             --without-pcidsk \
             --without-pcraster \
             --without-perl \
@@ -175,16 +168,15 @@ function build_gdal {
             --without-python \
             --without-qhull \
             --without-sde \
-            --without-sfcgal \
             --without-xerces \
             --without-xml2 \
         && make -j4 \
         && make install)
-        if [ -n "$IS_OSX" ]; then
-            :
-        else
-            strip -v --strip-unneeded ${BUILD_PREFIX}/lib/libgdal.so.*
-        fi
+    if [ -n "$IS_OSX" ]; then
+        :
+    else
+        strip -v --strip-unneeded ${BUILD_PREFIX}/lib/libgdal.so.*
+    fi
     touch gdal-stamp
 }
 
@@ -210,12 +202,14 @@ function pre_build {
     rm -rf /usr/local/lib/libcurl*
 
     suppress build_curl
+
     suppress build_jpeg
     suppress build_jsonc
     suppress build_proj
     suppress build_sqlite
     suppress build_expat
     suppress build_geos
+
     suppress build_gdal
 }
 
@@ -243,22 +237,9 @@ function run_tests {
 
 
 function build_wheel_cmd {
-    # Builds wheel with named command, puts into $WHEEL_SDIR
-    #
-    # Parameters:
-    #     cmd  (optional, default "pip_wheel_cmd"
-    #        Name of command for building wheel
-    #     repo_dir  (optional, default $REPO_DIR)
-    #
-    # Depends on
-    #     REPO_DIR  (or via input argument)
-    #     WHEEL_SDIR  (optional, default "wheelhouse")
-    #     BUILD_DEPENDS (optional, default "")
-    #     MANYLINUX_URL (optional, default "") (via pip_opts function)
-
     # Update the container's auditwheel with our patched version.
     if [ -n "$IS_OSX" ]; then
-        :
+	:
     else  # manylinux
         /opt/python/cp37-cp37m/bin/pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
     fi
@@ -274,5 +255,10 @@ function build_wheel_cmd {
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
     (cd $repo_dir && PIP_NO_BUILD_ISOLATION=0 PIP_USE_PEP517=0 $cmd $wheelhouse)
+    if [ -n "$IS_OSX" ]; then
+	:
+    else  # manylinux
+        /opt/python/cp37-cp37m/bin/pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
+    fi
     repair_wheelhouse $wheelhouse
 }
