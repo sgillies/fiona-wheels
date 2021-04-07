@@ -100,6 +100,7 @@ function build_gdal {
     build_jpeg
     build_libpng
     build_jsonc
+    build_tiff
     build_proj
     build_sqlite
     build_expat
@@ -205,6 +206,7 @@ function pre_build {
 
     suppress build_jpeg
     suppress build_jsonc
+    suppress build_tiff
     suppress build_proj
     suppress build_sqlite
     suppress build_expat
