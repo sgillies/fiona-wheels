@@ -232,7 +232,7 @@ function run_tests {
         sudo apt-get install -y ca-certificates
     fi
     cp -R ../Fiona/tests ./tests
-    python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions"
+    GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error[DGN]"
     fio --version
     fio env --formats
     pip install shapely && python ../test_fiona_issue383.py
