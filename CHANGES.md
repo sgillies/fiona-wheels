@@ -1,6 +1,12 @@
 Changes
 =======
 
+## 2021-05-28
+
+* GEOS 3.9.1
+* GDAL 3.3.0
+* Patch for GDAL PR #3786
+
 ## 2020-06-18
 
 * Disable GEOS support in the GDAL library builds for OS X to prevent conflicts
