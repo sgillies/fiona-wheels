@@ -67,6 +67,22 @@ function build_jsonc {
 }
 
 
+function build_tiff {
+    if [ -e tiff-stamp ]; then return; fi
+    build_zlib
+    build_jpeg
+    ensure_xz
+    fetch_unpack https://download.osgeo.org/libtiff/tiff-${TIFF_VERSION}.tar.gz
+    (cd tiff-${TIFF_VERSION} \
+        && mv VERSION VERSION.txt \
+        && (patch -u --force < ../patches/libtiff-rename-VERSION.patch || true) \
+        && ./configure \
+        && make -j4 \
+        && make install)
+    touch tiff-stamp
+}
+
+
 function build_proj {
     CFLAGS="$CFLAGS -g -O2"
     CXXFLAGS="$CXXFLAGS -g -O2"
@@ -176,13 +192,12 @@ function build_gdal {
 
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
-        && (patch -u -p2 --force < ../patches/3786.diff || true) \
         && ./configure \
-	        --with-crypto=yes \
-	        --with-hide-internal-symbols \
+	    --with-crypto=yes \
+	    --with-hide-internal-symbols \
             --disable-debug \
             --disable-static \
-	        --disable-driver-elastic \
+	    --disable-driver-elastic \
             --prefix=$BUILD_PREFIX \
             --with-curl=curl-config \
             --with-expat=${EXPAT_PREFIX} \
