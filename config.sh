@@ -111,62 +111,6 @@ function build_expat {
 }
 
 
-function get_cmake {
-    local cmake=cmake
-    if [ -n "$IS_OSX" ]; then
-        brew install cmake > /dev/null
-    else
-        fetch_unpack https://www.cmake.org/files/v3.12/cmake-3.12.1.tar.gz > /dev/null
-        (cd cmake-3.12.1 \
-            && ./bootstrap --prefix=$BUILD_PREFIX > /dev/null \
-            && make -j4 > /dev/null \
-            && make install > /dev/null)
-        cmake=/usr/local/bin/cmake
-    fi
-    echo $cmake
-}
-
-
-function build_tiff {
-    if [ -e tiff-stamp ]; then return; fi
-    build_zlib
-    build_jpeg
-    ensure_xz
-    fetch_unpack https://download.osgeo.org/libtiff/tiff-${TIFF_VERSION}.tar.gz
-    (cd tiff-${TIFF_VERSION} \
-        && mv VERSION VERSION.txt \
-        && (patch -u --force < ../patches/libtiff-rename-VERSION.patch || true) \
-        && ./configure \
-        && make -j4 \
-        && make install)
-    touch tiff-stamp
-}
-
-
-function build_openjpeg {
-    if [ -e openjpeg-stamp ]; then return; fi
-    build_zlib
-    build_tiff
-    build_lcms2
-    local cmake=$(get_cmake)
-    local archive_prefix="v"
-    if [ $(lex_ver $OPENJPEG_VERSION) -lt $(lex_ver 2.1.1) ]; then
-        archive_prefix="version."
-    fi
-    local out_dir=$(fetch_unpack https://github.com/uclouvain/openjpeg/archive/${archive_prefix}${OPENJPEG_VERSION}.tar.gz)
-    (cd $out_dir \
-        && $cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$BUILD_PREFIX . \
-        && make -j4 \
-        && make install)
-    touch openjpeg-stamp
-}
-
-
-function build_libwebp {
-    build_simple libwebp ${LIBWEBP_VERSION} https://storage.googleapis.com/downloads.webmproject.org/releases/webp tar.gz
-}
-
-
 function build_nghttp2 {
     if [ -e nghttp2-stamp ]; then return; fi
     fetch_unpack https://github.com/nghttp2/nghttp2/releases/download/v${NGHTTP2_VERSION}/nghttp2-${NGHTTP2_VERSION}.tar.gz
@@ -205,21 +149,6 @@ function build_curl {
     touch curl-stamp
 }
 
-function build_zstd {
-    CFLAGS="$CFLAGS -g -O2"
-    CXXFLAGS="$CXXFLAGS -g -O2"
-    if [ -e zstd-stamp ]; then return; fi
-    fetch_unpack https://github.com/facebook/zstd/archive/v${ZSTD_VERSION}.tar.gz
-    if [ -n "$IS_OSX" ]; then
-        sed_ere_opt="-E"
-    else
-        sed_ere_opt="-r"
-    fi
-    (cd zstd-${ZSTD_VERSION}  \
-        && make -j4 PREFIX=$BUILD_PREFIX ZSTD_LEGACY_SUPPORT=0 \
-        && make install SED_ERE_OPT=$sed_ere_opt)
-    touch zstd-stamp
-}
 
 function build_gdal {
     if [ -e gdal-stamp ]; then return; fi
@@ -227,15 +156,12 @@ function build_gdal {
     build_curl
     build_jpeg
     build_libpng
-    build_openjpeg
     build_jsonc
+    build_tiff
     build_proj
     build_sqlite
     build_expat
     build_geos
-    build_hdf5
-    build_netcdf
-    build_zstd
 
     CFLAGS="$CFLAGS -g -O2"
     CXXFLAGS="$CXXFLAGS -g -O2"
@@ -250,33 +176,28 @@ function build_gdal {
 
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
-        && (patch -u -p2 --force < ../patches/4646.diff || true) \
+        && (patch -u -p2 --force < ../patches/3786.diff || true) \
         && ./configure \
-            --with-crypto=yes \
-	    --with-hide-internal-symbols \
-	    --with-webp=${BUILD_PREFIX} \
+	        --with-crypto=yes \
+	        --with-hide-internal-symbols \
             --disable-debug \
             --disable-static \
-	    --disable-driver-elastic \
+	        --disable-driver-elastic \
             --prefix=$BUILD_PREFIX \
             --with-curl=curl-config \
             --with-expat=${EXPAT_PREFIX} \
             ${GEOS_CONFIG} \
             --with-geotiff=internal \
             --with-gif \
-            --with-grib \
             --with-jpeg \
             --with-libiconv-prefix=/usr \
             --with-libjson-c=${BUILD_PREFIX} \
-            --with-libtiff=${BUILD_PREFIX} \
+            --with-libtiff=internal \
             --with-libz=/usr \
-            --with-netcdf=${BUILD_PREFIX} \
-            --with-openjpeg \
             --with-pam \
             --with-png \
             --with-proj=${BUILD_PREFIX} \
             --with-sqlite3=${BUILD_PREFIX} \
-            --with-zstd=${BUILD_PREFIX} \
             --with-threads \
             --without-bsb \
             --without-cfitsio \
@@ -292,7 +213,6 @@ function build_gdal {
             --without-jpeg12 \
             --without-kakadu \
             --without-libgrass \
-            --without-libgrass \
             --without-libkml \
             --without-mrf \
             --without-mrsid \
@@ -307,7 +227,6 @@ function build_gdal {
             --without-python \
             --without-qhull \
             --without-sde \
-            --without-sfcgal \
             --without-xerces \
             --without-xml2 \
         && make -j4 \
@@ -344,18 +263,13 @@ function pre_build {
 
     suppress build_curl
 
-    suppress build_libpng
     suppress build_jpeg
-    suppress build_openjpeg
     suppress build_jsonc
+    suppress build_tiff
     suppress build_proj
     suppress build_sqlite
     suppress build_expat
-    suppress build_libwebp
     suppress build_geos
-    suppress build_hdf5
-    suppress build_netcdf
-    suppress build_zstd
 
     suppress build_gdal
 }
@@ -375,12 +289,11 @@ function run_tests {
         sudo apt-get update
         sudo apt-get install -y ca-certificates
     fi
-    cp -R ../rasterio/tests ./tests
-    pip install shapely
-    PROJ_NETWORK=ON python -m pytest -vv tests -m "not gdalbin" -k "not test_ensure_env_decorator_sets_gdal_data_prefix and not test_tiled_dataset_blocksize_guard and not test_untiled_dataset_blocksize and not test_positional_calculation_byindex and not test_transform_geom_polygon and not test_reproject_error_propagation and not test_issue2353"
-    rio --version
-    rio env --formats
-    python ../test_fiona_issue383.py
+    cp -R ../Fiona/tests ./tests
+    GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error"
+    fio --version
+    fio env --formats
+    pip install shapely && python ../test_fiona_issue383.py
 }
 
 
