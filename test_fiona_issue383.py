@@ -1,4 +1,4 @@
-import rasterio
+import fiona
 
 d = {
     "type": "Feature",
