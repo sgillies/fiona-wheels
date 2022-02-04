@@ -1,6 +1,24 @@
 Changes
 =======
 
+#@ 2022-02-04
+
+Configuration changes:
+
+* Openssl, curl, and nghttp2 are compiled from source for macos.
+* Dropping manylinux1 and switching to manylinux2014 unlocks upgrades of all of
+  GDAL's dependencies.
+* Multibuild has been updated to commit 3903f7f.
+
+Library version changes:
+
+* GDAL 3.4.1
+* Curl 7.80.0
+* Nghttp2 1.46.0
+* PROJ 8.2.1
+* GEOS 3.10.2
+* TIFF 4.3.0
+
 ## 2021-05-28
 
 * GEOS 3.9.1
