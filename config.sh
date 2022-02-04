@@ -294,6 +294,7 @@ function run_tests {
     unset GDAL_DATA
     unset PROJ_LIB
     if [ -n "$IS_OSX" ]; then
+        if [[ $MB_PYTHON_VERSION == "3.10"]]; then return; fi
         export PATH=$PATH:${BUILD_PREFIX}/bin
         export LC_ALL=en_US.UTF-8
         export LANG=en_US.UTF-8
@@ -308,7 +309,9 @@ function run_tests {
     GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error"
     fio --version
     fio env --formats
-    pip install shapely && python ../test_fiona_issue383.py
+    if [[ $MB_PYTHON_VERSION != "3.10" ]]; then
+        pip install shapely && python ../test_fiona_issue383.py
+    fi
 }
 
 
