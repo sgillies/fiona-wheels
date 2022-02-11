@@ -1,6 +1,12 @@
 Changes
 =======
 
+## 2022-02-11
+
+Python version changes:
+
+Python 3.6 has been restored to the build matrix for 1.8.x wheels.
+
 ## 2022-02-04
 
 Configuration changes:
