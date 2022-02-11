@@ -19,6 +19,10 @@ Library version changes:
 * GEOS 3.10.2
 * TIFF 4.3.0
 
+Python version changes:
+
+Python 3.6 has been removed and Python 3.10 has been added.
+
 ## 2021-05-28
 
 * GEOS 3.9.1
