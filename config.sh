@@ -1,4 +1,4 @@
-# Custom utilities for Rasterio wheels.
+# Custom utilities for Fiona wheels.
 #
 # Test for OSX with [ -n "$IS_OSX" ].
 
@@ -87,16 +87,19 @@ function build_proj {
     CFLAGS="$CFLAGS -g -O2"
     CXXFLAGS="$CXXFLAGS -g -O2"
     if [ -e proj-stamp ]; then return; fi
+    build_sqlite
     fetch_unpack http://download.osgeo.org/proj/proj-${PROJ_VERSION}.tar.gz
     (cd proj-${PROJ_VERSION} \
-        && ./configure --prefix=$BUILD_PREFIX \
-        && make -j4 \
-        && make install)
-    if [ -n "$IS_OSX" ]; then
-        :
-    else
-        strip -v --strip-unneeded ${BUILD_PREFIX}/lib/libproj.so.*
-    fi
+        && mkdir build && cd build \
+        && /usr/local/bin/cmake .. \
+        -DCMAKE_INSTALL_PREFIX:PATH=$BUILD_PREFIX \
+        -DBUILD_SHARED_LIBS=ON \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DENABLE_IPO=ON \
+        -DBUILD_APPS:BOOL=OFF \
+        -DBUILD_TESTING:BOOL=OFF \
+        && cmake --build . -j4 \
+        && cmake --install .)
     touch proj-stamp
 }
 
@@ -192,12 +195,13 @@ function build_gdal {
 
     fetch_unpack http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz
     (cd gdal-${GDAL_VERSION} \
+        && (patch -u -p2 --force < ../patches/5740.diff || true) \
         && ./configure \
-	    --with-crypto=yes \
-	    --with-hide-internal-symbols \
+	        --with-crypto=yes \
+	        --with-hide-internal-symbols \
             --disable-debug \
             --disable-static \
-	    --disable-driver-elastic \
+	        --disable-driver-elastic \
             --prefix=$BUILD_PREFIX \
             --with-curl=curl-config \
             --with-expat=${EXPAT_PREFIX} \
