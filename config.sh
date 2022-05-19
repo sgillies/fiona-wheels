@@ -285,10 +285,14 @@ function pre_build {
     suppress build_jpeg
     suppress build_jsonc
     suppress build_tiff
-    suppress build_proj
     suppress build_sqlite
+    suppress build_proj
     suppress build_expat
     suppress build_geos
+
+    if [ -n "$IS_OSX" ]; then
+        export LDFLAGS="${LDFLAGS} -Wl,-rpath,${BUILD_PREFIX}/lib"
+    fi
 
     suppress build_gdal
 }
