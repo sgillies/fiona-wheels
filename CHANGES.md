@@ -1,6 +1,17 @@
 Changes
 =======
 
+## 2022-05-20
+
+* Correctly apply patch from GDAL PR #5740 (FlatGeobuf segfault).
+
+## 2022-05-19
+
+Library version changes:
+
+* GDAL 3.5.0
+* PROJ 9.0.0
+
 ## 2022-02-11
 
 Python version changes:
