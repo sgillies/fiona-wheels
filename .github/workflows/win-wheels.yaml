@@ -92,6 +92,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: Toblerity/Fiona
+          ref: 1.9a2
           path: ./Fiona
 
       - name: Set up Python
@@ -107,7 +108,7 @@ jobs:
       - name: Install dependencies and Fiona wheel
         shell: bash
         run: |
-          python -m pip install shapely oldest-supported-numpy attrs pytest click mock boto3 packaging hypothesis
+          python -m pip install shapely oldest-supported-numpy attrs pytest click mock boto3 packaging hypothesis pytz
           python -m pip install --pre --find-links wheelhouse/artifact fiona
           python -m pip list
 
