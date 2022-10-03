@@ -25,8 +25,8 @@ jobs:
         include:
           - os: "macos-latest"
             os-name: "osx"
-          - os: "ARM64"
-            os-name: "osx"
+        #   - os: "ARM64"
+        #     os-name: "osx"
     env:
       BUILD_COMMIT: 1.8.21
       PLAT: "${{ matrix.platform }}"
