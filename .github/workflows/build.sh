@@ -4,6 +4,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   # curl from brew requires zstd, use system curl
   # if php is installed, brew tries to reinstall these after installing openblas
   brew remove --ignore-dependencies webp zstd xz libtiff curl php
+  export PATH=/opt/homebrew/opt/python@3.9/libexec/bin:$PATH
 fi
 
 if [[ "$MB_PYTHON_VERSION" == pypy3* ]]; then
@@ -16,6 +17,9 @@ if [[ "$MB_PYTHON_VERSION" == pypy3* ]]; then
 fi
 
 echo "::group::Install a virtualenv"
+  echo $PATH
+  which python
+  sleep 5
   source multibuild/common_utils.sh
   source multibuild/travis_steps.sh
   python3 -m pip install virtualenv
