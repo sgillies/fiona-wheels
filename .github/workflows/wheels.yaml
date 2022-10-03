@@ -41,7 +41,7 @@ jobs:
         with:
           submodules: true
       - name: Build Wheel
-        run: .github/workflows/build.sh
+        run: bash -x .github/workflows/build.sh
       - uses: actions/upload-artifact@v2
         with:
           name: wheels

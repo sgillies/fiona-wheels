@@ -71,6 +71,10 @@ function build_tiff {
     if [ -e tiff-stamp ]; then return; fi
     build_zlib
     build_jpeg
+	# Error: Failed to download resource "libzip"
+    # Download failed: 
+	# Homebrew-installed `curl` is not installed for: https://libzip.org/download/libzip-1.9.2.tar.xz
+	brew install curl
     ensure_xz
     fetch_unpack https://download.osgeo.org/libtiff/tiff-${TIFF_VERSION}.tar.gz
     (cd tiff-${TIFF_VERSION} \
