@@ -15,20 +15,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "ubuntu-20.04", "macos-latest" ]
-        python: [ "3.7", "3.8", "3.9", "3.10" ]
+        os: [ "macos-latest" ]
+        python: [ "3.9" ]
         platform: [ "x86_64" ]
-        macos-target: [ "10.10" ]
+        macos-target: [ "11" ]
         exclude:
           - os: "macos-latest"
             platform: "i686"
         include:
           - os: "macos-latest"
             os-name: "osx"
-          - os: "ubuntu-20.04"
-            os-name: "focal"
     env:
-      BUILD_COMMIT: 1.9a2
+      BUILD_COMMIT: 1.8.21
       PLAT: "${{ matrix.platform }}"
       MB_PYTHON_VERSION: "${{ matrix.python }}"
       MB_ML_VER: "2014"
@@ -49,26 +47,3 @@ jobs:
         with:
           name: wheels
           path: wheelhouse/*.whl
-
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    if: "startsWith(github.ref, 'refs/tags/')"
-    needs: build
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: wheels
-      - name: Upload Release
-        uses: fnkr/github-action-ghr@v1.3
-        env:
-          GHR_PATH: .
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  success:
-    needs: [build]
-    runs-on: ubuntu-latest
-    name: Wheels Successful
-    steps:
-      - name: Success
-        run: echo Wheels Successful
