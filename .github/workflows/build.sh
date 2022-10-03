@@ -22,8 +22,8 @@ echo "::group::Install a virtualenv"
   sleep 5
   source multibuild/common_utils.sh
   source multibuild/travis_steps.sh
-  python3 -m pip install virtualenv
-  before_install
+  #python3 -m pip install virtualenv
+  #before_install
 echo "::endgroup::"
 
 echo "::group::Build wheel"
