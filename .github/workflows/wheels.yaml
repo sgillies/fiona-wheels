@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "macos-latest" ]
+        os: [ "macos-latest", "ARM64" ]
         python: [ "3.9" ]
         platform: [ "x86_64" ]
         macos-target: [ "11" ]
@@ -24,6 +24,8 @@ jobs:
             platform: "i686"
         include:
           - os: "macos-latest"
+            os-name: "osx"
+          - os: "ARM64"
             os-name: "osx"
     env:
       BUILD_COMMIT: 1.8.21
