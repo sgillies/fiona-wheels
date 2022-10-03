@@ -17,7 +17,7 @@ jobs:
       matrix:
         os: [ "macos-latest", "ARM64" ]
         python: [ "3.9" ]
-        platform: [ "x86_64" ]
+        platform: [ "x86_64", "arm64"]
         macos-target: [ "11" ]
         exclude:
           - os: "macos-latest"
@@ -25,8 +25,8 @@ jobs:
         include:
           - os: "macos-latest"
             os-name: "osx"
-        #   - os: "ARM64"
-        #     os-name: "osx"
+          - os: "ARM64"
+             os-name: "osx"
     env:
       BUILD_COMMIT: 1.8.21
       PLAT: "${{ matrix.platform }}"
@@ -40,6 +40,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Install python3.9 with brew
+        run: brew install python@${{ matrix.python }}
       - name: Build Wheel
         run: bash -x .github/workflows/build.sh
       - uses: actions/upload-artifact@v2
