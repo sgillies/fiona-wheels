@@ -36,9 +36,9 @@ jobs:
       TRAVIS_OS_NAME: ${{ matrix.os-name }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos-target }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: false
       - name: Build Wheel
         run: bash -x .github/workflows/build.sh
       - uses: actions/upload-artifact@v2
