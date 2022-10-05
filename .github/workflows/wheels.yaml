@@ -23,9 +23,6 @@ jobs:
         exclude:
           - os: "macos-latest"
             platform: "i686"
-              #        include:
-              #- os: "macos-latest"
-              #os-name: "osx"
     env:
       BUILD_COMMIT: 1.8.21
       PLAT: "${{ matrix.platform }}"
@@ -35,10 +32,16 @@ jobs:
       TEST_DEPENDS: "oldest-supported-numpy attrs==21.4.0 pytest==6.2.5 click==8.0.3 mock boto3 packaging hypothesis==4.38.1 wheel==0.34.2 pytz"
       TRAVIS_OS_NAME: ${{ matrix.os-name }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos-target }}
+      PIP_CMD: pip3
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: true
+      - name: Setup Python
+        run: |
+          brew install python@{matrix.python}
+          PATH=/opt/homebrew/opt/python@3.9/libexec/bin:$PATH
+          python -c "import sys; print(sys.version)" | awk -F \. {'print $1$2'}
       - name: Build Wheel
         run: bash -x .github/workflows/build.sh
       - uses: actions/upload-artifact@v2
