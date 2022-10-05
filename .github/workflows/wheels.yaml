@@ -38,9 +38,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Setup Python
+      - name: Setup Python and cmake
         run: |
           brew install python@${MB_PYTHON_VERSION}
+          brew install cmake
           PATH=/opt/homebrew/opt/python@${MB_PYTHON_VERSION}/libexec/bin:$PATH
           python -c "import sys; print(sys.version)" | awk -F \. {'print $1$2'}
       - name: Build Wheel
