@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: false
+          submodules: true
       - name: Build Wheel
         run: bash -x .github/workflows/build.sh
       - uses: actions/upload-artifact@v2
