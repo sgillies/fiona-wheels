@@ -20,9 +20,9 @@ jobs:
         platform: [ "arm64"]
         macos-target: [ "11" ]
         os-name: ["osx"]
-        exclude:
+        include:
           - os: "macos-latest"
-            platform: "i686"
+            platform: "x86_64"
     env:
       BUILD_COMMIT: 1.8.21
       PLAT: "${{ matrix.platform }}"
