@@ -33,6 +33,7 @@ jobs:
       TRAVIS_OS_NAME: ${{ matrix.os-name }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos-target }}
       PIP_CMD: pip3
+      PYTHON.EXE: python3
     steps:
       - uses: actions/checkout@v3
         with:
