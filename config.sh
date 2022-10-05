@@ -1,4 +1,4 @@
-# Custom utilities for Fiona wheels.
+#k Custom utilities for Fiona wheels.
 #
 # Test for OSX with [ -n "$IS_OSX" ].
 
@@ -103,7 +103,7 @@ function build_proj {
         -DBUILD_APPS:BOOL=OFF \
         -DBUILD_TESTING:BOOL=OFF \
         && cmake --build . -j4 \
-        && cmake --install .)
+        && sudo cmake --install .)
     touch proj-stamp
 }
 
