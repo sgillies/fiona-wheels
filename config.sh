@@ -54,7 +54,7 @@ function build_jsonc {
     (cd json-c-${JSONC_VERSION} \
         && /usr/local/bin/cmake -DCMAKE_INSTALL_PREFIX=$BUILD_PREFIX . \
         && make -j4 \
-        && make install)
+        && sudo make install)
     if [ -n "$IS_OSX" ]; then
         for lib in $(ls ${BUILD_PREFIX}/lib/libjson-c.5*.dylib); do
             install_name_tool -id $lib $lib
@@ -72,7 +72,7 @@ function build_tiff {
     build_zlib
     build_jpeg
 	# Error: Failed to download resource "libzip"
-    # Download failed: 
+    # Download failed:
 	# Homebrew-installed `curl` is not installed for: https://libzip.org/download/libzip-1.9.2.tar.xz
 	brew install curl
     ensure_xz
@@ -82,7 +82,7 @@ function build_tiff {
         && (patch -u --force < ../patches/libtiff-rename-VERSION.patch || true) \
         && ./configure \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch tiff-stamp
 }
 
@@ -114,7 +114,7 @@ function build_sqlite {
     (cd sqlite-autoconf-${SQLITE_VERSION} \
         && ./configure --prefix=$BUILD_PREFIX \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch sqlite-stamp
 }
 
@@ -128,7 +128,7 @@ function build_expat {
         (cd expat-${EXPAT_VERSION} \
             && ./configure --prefix=$BUILD_PREFIX \
             && make -j4 \
-            && make install)
+            && sudo make install)
     fi
     touch expat-stamp
 }
@@ -140,7 +140,7 @@ function build_nghttp2 {
     (cd nghttp2-${NGHTTP2_VERSION}  \
         && ./configure --enable-lib-only --prefix=$BUILD_PREFIX \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch nghttp2-stamp
 }
 
@@ -152,7 +152,7 @@ function build_openssl {
     (cd ${OPENSSL_ROOT} \
         && ./config no-ssl2 no-shared -fPIC --prefix=$BUILD_PREFIX \
         && make -j4 \
-        && if [ -n "$IS_OSX" ]; then sudo make install; else make install; fi)
+        && if [ -n "$IS_OSX" ]; then sudo make install; else sudo make install; fi)
     touch openssl-stamp
 }
 
@@ -168,7 +168,7 @@ function build_curl {
     (cd curl-${CURL_VERSION} \
         && LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BUILD_PREFIX/lib:$BUILD_PREFIX/lib64 ./configure $flags \
         && make -j4 \
-        && if [ -n "$IS_OSX" ]; then sudo make install; else make install; fi)
+        && if [ -n "$IS_OSX" ]; then sudo make install; else sudo make install; fi)
     touch curl-stamp
 }
 
@@ -253,7 +253,7 @@ function build_gdal {
             --without-xerces \
             --without-xml2 \
         && make -j4 \
-        && make install)
+        && sudo make install)
     if [ -n "$IS_OSX" ]; then
         :
     else
