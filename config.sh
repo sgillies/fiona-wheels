@@ -57,10 +57,10 @@ function build_jsonc {
         && sudo make install)
     if [ -n "$IS_OSX" ]; then
         for lib in $(ls ${BUILD_PREFIX}/lib/libjson-c.5*.dylib); do
-            install_name_tool -id $lib $lib
+            sudo install_name_tool -id $lib $lib
         done
         for lib in $(ls ${BUILD_PREFIX}/lib/libjson-c.dylib); do
-            install_name_tool -id $lib $lib
+            sudo install_name_tool -id $lib $lib
         done
     fi
     touch jsonc-stamp
