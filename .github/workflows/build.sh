@@ -18,8 +18,7 @@ fi
 
 echo "::group::Install a virtualenv"
   PATH=/opt/homebrew/opt/python@3.9/libexec/bin:$PATH
-  echo $PATH
-  which python
+  python -c "import sys; print(sys.version)" | awk -F \. {'print $1$2'}
   sleep 5
   source multibuild/common_utils.sh
   source multibuild/travis_steps.sh

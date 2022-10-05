@@ -52,7 +52,7 @@ function build_jsonc {
     if [ -e jsonc-stamp ]; then return; fi
     fetch_unpack https://s3.amazonaws.com/json-c_releases/releases/json-c-${JSONC_VERSION}.tar.gz
     (cd json-c-${JSONC_VERSION} \
-        && /usr/local/bin/cmake -DCMAKE_INSTALL_PREFIX=$BUILD_PREFIX . \
+        && cmake -DCMAKE_INSTALL_PREFIX=$BUILD_PREFIX . \
         && make -j4 \
         && sudo make install)
     if [ -n "$IS_OSX" ]; then
@@ -95,7 +95,7 @@ function build_proj {
     fetch_unpack http://download.osgeo.org/proj/proj-${PROJ_VERSION}.tar.gz
     (cd proj-${PROJ_VERSION} \
         && mkdir build && cd build \
-        && /usr/local/bin/cmake .. \
+        && cmake .. \
         -DCMAKE_INSTALL_PREFIX:PATH=$BUILD_PREFIX \
         -DBUILD_SHARED_LIBS=ON \
         -DCMAKE_BUILD_TYPE=Release \
