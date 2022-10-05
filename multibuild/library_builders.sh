@@ -69,7 +69,7 @@ function build_simple {
     (cd $name_version \
         && ./configure --prefix=$BUILD_PREFIX $configure_args \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch "${name}-stamp"
 }
 
@@ -86,7 +86,7 @@ function build_github {
     (cd $out_dir \
         && ./configure --prefix=$BUILD_PREFIX $configure_args \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch "${name}-stamp"
 }
 
@@ -155,7 +155,7 @@ function build_jpeg {
     (cd jpeg-${JPEG_VERSION} \
         && ./configure --prefix=$BUILD_PREFIX \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch jpeg-stamp
 }
 
@@ -170,7 +170,7 @@ function build_bzip2 {
     fetch_unpack https://sourceware.org/pub/bzip2/bzip2-${BZIP2_VERSION}.tar.gz
     (cd bzip2-${BZIP2_VERSION} \
         && make -f Makefile-libbz2_so \
-        && make install PREFIX=$BUILD_PREFIX)
+        && sudo make install PREFIX=$BUILD_PREFIX)
     touch bzip2-stamp
 }
 
@@ -218,7 +218,7 @@ function build_openjpeg {
     local out_dir=$(fetch_unpack https://github.com/uclouvain/openjpeg/archive/${archive_prefix}${OPENJPEG_VERSION}.tar.gz)
     (cd $out_dir \
         && $cmake -DCMAKE_INSTALL_PREFIX=$BUILD_PREFIX . \
-        && make install)
+        && sudo make install)
     touch openjpeg-stamp
 }
 
@@ -285,7 +285,7 @@ function build_hdf5 {
         && ./configure --with-szlib=$BUILD_PREFIX --prefix=$BUILD_PREFIX \
         --enable-threadsafe --enable-unsupported --with-pthread=yes \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch hdf5-stamp
 }
 
@@ -298,7 +298,7 @@ function build_libaec {
     (cd $root_name \
         && ./configure --prefix=$BUILD_PREFIX \
         && make \
-        && make install)
+        && sudo make install)
     touch libaec-stamp
 }
 
@@ -308,7 +308,7 @@ function build_blosc {
     fetch_unpack https://github.com/Blosc/c-blosc/archive/v${BLOSC_VERSION}.tar.gz
     (cd c-blosc-${BLOSC_VERSION} \
         && $cmake -DCMAKE_INSTALL_PREFIX=$BUILD_PREFIX . \
-        && make install)
+        && sudo make install)
     if [ -n "$IS_MACOS" ]; then
         # Fix blosc library id bug
         for lib in $(ls ${BUILD_PREFIX}/lib/libblosc*.dylib); do
@@ -328,7 +328,7 @@ function build_lzo {
     (cd lzo-${LZO_VERSION} \
         && ./configure --prefix=$BUILD_PREFIX --enable-shared \
         && make \
-        && make install)
+        && sudo make install)
     touch lzo-stamp
 }
 
@@ -351,7 +351,7 @@ function build_curl {
         LIBS=-ldl ./configure $flags; else \
         ./configure $flags; fi\
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch curl-stamp
 }
 
@@ -376,7 +376,7 @@ function build_openssl {
     (cd ${OPENSSL_ROOT} \
         && ./config no-ssl2 no-shared -fPIC --prefix=$BUILD_PREFIX \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch openssl-stamp
 }
 
@@ -388,7 +388,7 @@ function build_netcdf {
     (cd netcdf-c-${NETCDF_VERSION} \
         && ./configure --prefix=$BUILD_PREFIX --enable-dap \
         && make -j4 \
-        && make install)
+        && sudo make install)
     touch netcdf-stamp
 }
 
@@ -508,7 +508,7 @@ function build_cfitsio {
         fetch_unpack https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/${cfitsio_name_ver}.tar.gz
         (cd cfitsio \
             && ./configure --prefix=$BUILD_PREFIX \
-            && make shared && make install)
+            && make shared && sudo make install)
     fi
     touch cfitsio-stamp
 }
