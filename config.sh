@@ -273,9 +273,10 @@ function pre_build {
 
     suppress build_nghttp2
 
-    if [ -n "$IS_OSX" ]; then
-        rm /usr/local/lib/libpng*
-    fi
+	# Must add if on PLAT
+    #if [ -n "$IS_OSX" ]; then
+    #    rm /usr/local/lib/libpng*
+    #fi
 
     suppress build_openssl
 
