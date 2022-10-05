@@ -17,7 +17,7 @@ jobs:
       matrix:
         os: [ "macos-latest" ]
         python: [ "3.9" ]
-        platform: [ "x86_64", "arm64"]
+        platform: [ "x86_64"]
         macos-target: [ "11" ]
         exclude:
           - os: "macos-latest"
