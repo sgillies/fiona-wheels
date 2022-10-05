@@ -39,8 +39,8 @@ jobs:
           submodules: true
       - name: Setup Python
         run: |
-          brew install python@{matrix.python}
-          PATH=/opt/homebrew/opt/python@3.9/libexec/bin:$PATH
+          brew install python@${MB_PYTHON_VERSION}
+          PATH=/opt/homebrew/opt/python@${MB_PYTHON_VERSION}/libexec/bin:$PATH
           python -c "import sys; print(sys.version)" | awk -F \. {'print $1$2'}
       - name: Build Wheel
         run: bash -x .github/workflows/build.sh
