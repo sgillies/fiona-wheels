@@ -20,6 +20,7 @@ echo "::group::Test wheel"
   PATH=/opt/homebrew/opt/python@${MB_PYTHON_VERSION}/libexec/bin:$PATH
   source multibuild/common_utils.sh
   echo $PIP_CMD
+  echo $PYTHON_EXE
   install_run $PLAT
 echo "::endgroup::"
 
