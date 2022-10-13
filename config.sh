@@ -309,8 +309,8 @@ function run_tests {
         export LC_ALL=C.UTF-8
         export LANG=C.UTF-8
         export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
-        sudo apt-get update
-        sudo apt-get install -y ca-certificates
+        apt-get update
+        apt-get install -y ca-certificates
     fi
     cp -R ../Fiona/tests ./tests
     GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
