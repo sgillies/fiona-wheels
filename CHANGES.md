@@ -1,6 +1,26 @@
 Changes
 =======
 
+## 2022-10-13
+
+Library version changes:
+
+* GDAL 3.5.2
+* PROJ 9.0.1
+* GEOS 3.11.0
+
+Python version changes:
+
+Python 3.11 has been added.
+
+Configuration changes:
+
+Extensions are made using Cython >= 0.29.29 to address a problem involving Python's development mode.
+
+## 2022-06-30
+
+Windows platform wheels are now provided using cibuildwheel and vcpkg.
+
 ## 2022-05-20
 
 * Correctly apply patch from GDAL PR #5740 (FlatGeobuf segfault).

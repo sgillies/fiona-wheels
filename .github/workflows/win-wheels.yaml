@@ -1,7 +1,11 @@
+
 ---
 name: Windows wheels
 
 on: [push, pull_request, workflow_dispatch]
+
+env:
+  REF: 1.9a3
 
 # cancel running jobs on new commit to PR
 concurrency:
@@ -19,60 +23,78 @@ jobs:
           - os: "windows-2019"
             arch: AMD64
             msvc_arch: x64
-            # windows requires windows-specific paths
-            vcpkg_cache: "c:\\vcpkg\\installed"
-            vcpkg_logs: "c:\\vcpkg\\buildtrees\\**\\*.log"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          repository: Toblerity/Fiona
-          ref: 1.9a2
-
-      - name: Add to Fiona setup.cfg
-        shell: bash
-        run: |
-          echo -e "\n[build_ext]" >> setup.cfg
-          echo "include_dirs = C:/vcpkg/installed/x64-windows/include" >> setup.cfg
-          echo "libraries = gdal_i" >> setup.cfg
-          echo "library_dirs = C:/vcpkg/installed/x64-windows/lib" >> setup.cfg
-          cat setup.cfg
 
       - name: Cache vcpkg
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         id: vcpkgcache
         with:
-          path: C:/vcpkg/installed
-          key: ${{ runner.os }}-vcpkg
+          path: "$VCPKG_INSTALLATION_ROOT/installed"
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('.github/workflows/*', 'vcpkg.json') }}-1
 
-      - name: Install GDAL
+      - name: Bootstrap vcpkg
+        env:
+          VCPKG_DEFAULT_TRIPLET: x64-windows
         run: |
-          vcpkg install gdal[core]:x64-windows
-          vcpkg list
+          cd "$VCPKG_INSTALLATION_ROOT"
+          git pull > nul
+          ./bootstrap-vcpkg.bat -disableMetrics
+        shell: bash
+
+      - name: Install C Packages (GDAL et al)
+        env:
+          VCPKG_DEFAULT_TRIPLET: x64-windows
+        run: |
+          vcpkg install --feature-flags="versions,manifests" --x-manifest-root=${GITHUB_WORKSPACE} --x-install-root=$VCPKG_INSTALLATION_ROOT/installed
+        shell: bash
 
       - name: Upload vcpkg build logs
         if: ${{ failure() }}
         uses: actions/upload-artifact@v3
         with:
-          path: ${{ matrix.vcpkg_logs }}
+          path: "C:/vcpkg/buildtrees/**/*.log"
 
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: Toblerity/Fiona
+          fetch-depth: 0
+          ref: ${{ env.REF }}
+
+      - name: Add to setup.cfg
+        run: |
+          echo -e "\n[build_ext]" >> setup.cfg
+          echo "include_dirs = C:/vcpkg/installed/x64-windows/include" >> setup.cfg
+          echo "libraries = gdal" >> setup.cfg
+          echo "library_dirs = C:/vcpkg/installed/x64-windows/lib" >> setup.cfg
+          cat setup.cfg
+        shell: bash
+
+      - name: vcpkg debugging
+        run: |
+          find $VCPKG_INSTALLATION_ROOT -name gdal.lib
+          find $VCPKG_INSTALLATION_ROOT -name header.dxf
+        shell: bash
+ 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.3.1
+        uses: pypa/cibuildwheel@v2.10.2
         env:
           CIBW_SKIP: "*-win32 pp*"
           CIBW_ENVIRONMENT_WINDOWS:
-            VCPKG_INSTALL="$VCPKG_INSTALLATION_ROOT/installed/x64-windows"
+            VCPKG_INSTALL="C:/vcpkg/installed/x64-windows"
             GDAL_INCLUDE_PATH="$VCPKG_INSTALL/include"
             GDAL_LIBRARY_PATH="$VCPKG_INSTALL/lib"
             PACKAGE_DATA=1
             GDAL_DATA="$VCPKG_INSTALL/share/gdal"
             PROJ_LIB="$VCPKG_INSTALL/share/proj/data"
-            GDAL_VERSION="3.4.3"
+            GDAL_VERSION="3.5.2"
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: delvewheel repair --add-path C:/vcpkg/installed/x64-windows/bin -w {dest_dir} {wheel}
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
 
@@ -84,15 +106,15 @@ jobs:
       fail-fast: false
       matrix:
         os: ["windows-latest"]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11-dev"]
 
     steps:
       - uses: actions/checkout@v3
-      - name: Checkout Fiona
+      - name: Checkout Rasterio
         uses: actions/checkout@v3
         with:
           repository: Toblerity/Fiona
-          ref: 1.9a2
+          ref: ${{ env.REF }}
           path: ./Fiona
 
       - name: Set up Python
@@ -104,7 +126,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: wheelhouse
-
       - name: Install dependencies and Fiona wheel
         shell: bash
         run: |
@@ -119,4 +140,4 @@ jobs:
           fio env --formats
           python test_fiona_issue383.py
           cp -R Fiona/tests tests
-          GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES PROJ_NETWORK=ON python -m pytest -vv tests -m "not gdalbin" -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
+          GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES PROJ_NETWORK=ON python -m pytest -vv tests -m "not gdalbin" -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf] and not proj_data_environ"
