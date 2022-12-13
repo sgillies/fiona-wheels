@@ -1,6 +1,13 @@
 Changes
 =======
 
+## 2022-12-13
+
+Library version changes:
+
+* GDAL 3.5.3
+* GEOS 3.11.1
+
 ## 2022-10-13
 
 Library version changes:
@@ -15,7 +22,8 @@ Python 3.11 has been added.
 
 Configuration changes:
 
-Extensions are made using Cython >= 0.29.29 to address a problem involving Python's development mode.
+Extensions are made using Cython >= 0.29.29 to address a problem involving
+Python's development mode.
 
 ## 2022-06-30
 
