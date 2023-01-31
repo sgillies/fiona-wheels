@@ -276,7 +276,7 @@ function pre_build {
     fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
 
     # Remove previously installed curl.
-    # rm -rf /usr/local/lib/libcurl* || true
+    rm -rf /usr/local/lib/libcurl* || true
 
     suppress build_curl
 
