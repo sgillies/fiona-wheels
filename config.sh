@@ -276,7 +276,7 @@ function pre_build {
     fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
 
     # Remove previously installed curl.
-    rm -rf /usr/local/lib/libcurl* || true
+    # rm -rf /usr/local/lib/libcurl* || true
 
     suppress build_curl
 
@@ -338,7 +338,7 @@ function build_wheel_cmd {
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
-    (cd $repo_dir && GDAL_VERSION=3.5.3 PIP_NO_BUILD_ISOLATION=0 PIP_USE_PEP517=0 $cmd $wheelhouse)
+    (cd $repo_dir && GDAL_VERSION=3.5.3 $cmd $wheelhouse)
     if [ -n "$IS_OSX" ]; then
 	:
     else  # manylinux
