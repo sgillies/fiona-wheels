@@ -115,7 +115,7 @@ function build_tiff {
     (cd tiff-${TIFF_VERSION} \
         && mv VERSION VERSION.txt \
         && (patch -u --force < ../patches/libtiff-rename-VERSION.patch || true) \
-        && ./configure \
+        && ./configure --prefix=$BUILD_PREFIX \
         && make -j4 \
         && make install)
     touch tiff-stamp
