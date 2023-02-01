@@ -1,6 +1,13 @@
 Changes
 =======
 
+## 2023-01-31
+
+New Platform: macosx-11.0-arm64 wheels are now built on Cirrus Ci
+(thanks, folks!).
+
+Configurations changes: GDAL, GEOS, and PROJ builds now use CMake.
+
 ## 2022-12-13
 
 Library version changes:
