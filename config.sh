@@ -84,8 +84,8 @@ function build_jsonc {
 
 
 function build_proj {
-    CFLAGS="$CFLAGS -g -O2"
-    CXXFLAGS="$CXXFLAGS -g -O2"
+    CFLAGS="$CFLAGS -DPROJ_RENAME_SYMBOLS -g -O2"
+    CXXFLAGS="$CXXFLAGS -DPROJ_RENAME_SYMBOLS -DPROJ_INTERNAL_CPP_NAMESPACE -g -O2"
     if [ -e proj-stamp ]; then return; fi
     local cmake=cmake
     build_sqlite
@@ -200,8 +200,8 @@ function build_gdal {
     build_expat
     build_geos
 
-    CFLAGS="$CFLAGS -g -O2"
-    CXXFLAGS="$CXXFLAGS -g -O2"
+    CFLAGS="$CFLAGS -DPROJ_RENAME_SYMBOLS -g -O2"
+    CXXFLAGS="$CXXFLAGS -DPROJ_RENAME_SYMBOLS -DPROJ_INTERNAL_CPP_NAMESPACE -g -O2"
 
     if [ -n "$IS_OSX" ]; then
         GEOS_CONFIG="-DGDAL_USE_GEOS=OFF"
