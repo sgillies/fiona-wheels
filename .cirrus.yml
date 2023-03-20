@@ -50,7 +50,7 @@ macos_arm64_task:
 linux_aarch64_task:
   name: Build Rasterio wheels for Linux ARM64.
   arm_container:
-    image: ubuntu:20.04
+    image: multibuild/focal_arm64v8
   env:
     << : *ENV_TEMPLATE
     PLAT: "aarch64"
