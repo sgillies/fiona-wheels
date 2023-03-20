@@ -17,13 +17,11 @@ jobs:
       matrix:
         os: [ "ubuntu-20.04", "macos-11" ]
         python: [ "3.7", "3.8", "3.9", "3.10", "3.11" ]
-        platform: [ "x86_64", "aarch64" ]
+        platform: [ "x86_64" ]
         macos-target: [ "10.10" ]
         exclude:
           - os: "macos-11"
             platform: "i686"
-          - os: "macos-11"
-            platform: "aarch64"
         include:
           - os: "macos-11"
             os-name: "osx"
@@ -42,11 +40,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Set up QEMU
-        if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v2
-        with:
-          platform: all
       - uses: actions/setup-python@v2
         with:
           python-version: 3.9
