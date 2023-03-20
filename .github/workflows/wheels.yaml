@@ -22,6 +22,8 @@ jobs:
         exclude:
           - os: "macos-11"
             platform: "i686"
+          - os: "macos-11"
+            platform: "aarch64"
         include:
           - os: "macos-11"
             os-name: "osx"
