@@ -1,6 +1,12 @@
 Changes
 =======
 
+## 2023-03-20
+
+Library version changes:
+
+* GEOS 3.11.2
+
 ## 2023-01-31
 
 New Platform: macosx-11.0-arm64 wheels are now built on Cirrus Ci

@@ -17,7 +17,7 @@ jobs:
       matrix:
         os: [ "ubuntu-20.04", "macos-11" ]
         python: [ "3.7", "3.8", "3.9", "3.10", "3.11" ]
-        platform: [ "x86_64" ]
+        platform: [ "x86_64", "aarch64" ]
         macos-target: [ "10.10" ]
         exclude:
           - os: "macos-11"
@@ -28,7 +28,7 @@ jobs:
           - os: "ubuntu-20.04"
             os-name: "focal"
     env:
-      BUILD_COMMIT: 1.9.1
+      BUILD_COMMIT: 1.9.2
       PLAT: "${{ matrix.platform }}"
       MB_PYTHON_VERSION: "${{ matrix.python }}"
       MB_ML_VER: "2014"
@@ -37,9 +37,14 @@ jobs:
       TRAVIS_OS_NAME: ${{ matrix.os-name }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos-target }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platform: all
       - uses: actions/setup-python@v2
         with:
           python-version: 3.9
