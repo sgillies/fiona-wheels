@@ -59,8 +59,6 @@ linux_aarch64_task:
       - MB_PYTHON_VERSION: "3.10"
       - MB_PYTHON_VERSION: "3.9"
       - MB_PYTHON_VERSION: "3.8"
-  install_pre_requirements_script:
-    - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git
   build_wheel_script:
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
