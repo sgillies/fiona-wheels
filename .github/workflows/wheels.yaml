@@ -28,7 +28,7 @@ jobs:
           - os: "ubuntu-20.04"
             os-name: "focal"
     env:
-      BUILD_COMMIT: 1.9.1
+      BUILD_COMMIT: 1.9.3
       PLAT: "${{ matrix.platform }}"
       MB_PYTHON_VERSION: "${{ matrix.python }}"
       MB_ML_VER: "2014"
@@ -37,7 +37,7 @@ jobs:
       TRAVIS_OS_NAME: ${{ matrix.os-name }}
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macos-target }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - uses: actions/setup-python@v2
