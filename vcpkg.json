@@ -2,7 +2,7 @@
     "name": "fiona",
     "version": "1.9.4",
     "dependencies": [ "gdal" ],
-    "builtin-baseline": "6ca56aeb457f033d344a7106cb3f9f1abf8f4e98",
+    "builtin-baseline": "8fdb0f2e58ad31d02b314ed45e6a53b19302472d",
     "overrides": [
         { "name": "gdal", "version": "3.6.4" },
         { "name": "proj", "version": "9.0.1" }
