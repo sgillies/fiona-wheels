@@ -1,6 +1,12 @@
 Changes
 =======
 
+## 2023-05-16
+
+Library version changes:
+
+* GDAL 3.6.4
+
 ## 2023-04-10
 
 Library version changes:
