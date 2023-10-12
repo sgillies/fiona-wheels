@@ -164,7 +164,7 @@ function build_openssl {
     fetch_unpack ${OPENSSL_DOWNLOAD_URL}/${OPENSSL_ROOT}.tar.gz
     check_sha256sum $ARCHIVE_SDIR/${OPENSSL_ROOT}.tar.gz ${OPENSSL_HASH}
     (cd ${OPENSSL_ROOT} \
-        && ./config no-ssl2 no-shared -fPIC --prefix=$BUILD_PREFIX \
+        && ./config no-ssl2 -fPIC --prefix=$BUILD_PREFIX \
         && make -j4 \
         && if [ -n "$IS_OSX" ]; then sudo make install; else make install; fi)
     touch openssl-stamp
@@ -175,8 +175,8 @@ function build_curl {
     if [ -e curl-stamp ]; then return; fi
     CFLAGS="$CFLAGS -g -O2"
     CXXFLAGS="$CXXFLAGS -g -O2"
-    build_nghttp2
     build_openssl
+    build_nghttp2
     local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl"
     #    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
     (cd curl-${CURL_VERSION} \
@@ -268,13 +268,13 @@ function pre_build {
     #fi
 
     local cmake=$(get_modern_cmake)
+    suppress build_openssl
     suppress build_nghttp2
 
     if [ -n "$IS_OSX" ]; then
         rm /usr/local/lib/libpng* || true
     fi
 
-    suppress build_openssl
 
     fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
 
@@ -314,40 +314,40 @@ function run_tests {
         apt-get install -y ca-certificates
     fi
     cp -R ../Fiona/tests ./tests
+    python -m pip install "shapely;python_version<'3.12'" $TEST_DEPENDS
     GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
     fio --version
     fio env --formats
-    if [[ $MB_PYTHON_VERSION != "3.10" ]]; then
-        pip install shapely && python ../test_fiona_issue383.py
-    fi
+    python ../test_fiona_issue383.py
 }
 
 
 function build_wheel_cmd {
-    # Update the container's auditwheel with our patched version.
-    if [ -n "$IS_OSX" ]; then
-	:
-    else  # manylinux
-        /opt/python/cp37-cp37m/bin/pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
-    fi
-
-    local cmd=${1:-pip_wheel_cmd}
+    local cmd=${1:-build_cmd}
     local repo_dir=${2:-$REPO_DIR}
     [ -z "$repo_dir" ] && echo "repo_dir not defined" && exit 1
     local wheelhouse=$(abspath ${WHEEL_SDIR:-wheelhouse})
     start_spinner
     if [ -n "$(is_function "pre_build")" ]; then pre_build; fi
     stop_spinner
+    pip install -U pip
+    pip install -U build
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
-    (cd $repo_dir && GDAL_VERSION=3.5.3 $cmd $wheelhouse)
+    (cd $repo_dir && GDAL_VERSION=3.6.4 $cmd $wheelhouse)
     if [ -n "$IS_OSX" ]; then
 	:
     else  # manylinux
-        /opt/python/cp37-cp37m/bin/pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
+        pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
     fi
     repair_wheelhouse $wheelhouse
+}
+
+
+function build_cmd {
+    local abs_wheelhouse=$1
+    python -m build -o $abs_wheelhouse
 }
 
 
