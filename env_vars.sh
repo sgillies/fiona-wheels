@@ -18,4 +18,4 @@ export GDAL_CONFIG=/usr/local/bin/gdal-config
 export PACKAGE_DATA=1
 export PROJ_DATA=/usr/local/share/proj
 export AUDITWHEEL_EXTRA_LIB_NAME_TAG=fiona
-export TEST_DEPENDS="oldest-supported-numpy attrs pytest click mock boto3 packaging hypothesis pytz fsspec"
+export TEST_DEPENDS="oldest-supported-numpy attrs pytest click mock boto3 packaging hypothesis pytz fsspec aiohttp requests"
