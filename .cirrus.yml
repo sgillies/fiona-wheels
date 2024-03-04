@@ -5,18 +5,19 @@ wheel_build_task:
   env:
     BUILD_PREFIX: /private/tmp/local
     REPO_DIR: Fiona
-    BUILD_COMMIT: rel-1.10a1
+    BUILD_COMMIT: master
     CIRRUS_CLONE_SUBMODULES: true
     PATH: /opt/homebrew/opt/python@3.10/bin:$PATH
     PLAT: "arm64"
-    BUILD_DEPENDS: "setuptools numpy>=1.25,<2 cython~=3.0.2 wheel"
-    TEST_DEPENDS: "oldest-supported-numpy attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests"
+    BUILD_DEPENDS: "setuptools cython~=3.0.2 wheel"
+    TEST_DEPENDS: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests"
     MACOSX_DEPLOYMENT_TARGET: "11.0"
     matrix:
       - MB_PYTHON_VERSION: "3.12"
       - MB_PYTHON_VERSION: "3.11"
       - MB_PYTHON_VERSION: "3.10"
       - MB_PYTHON_VERSION: "3.9"
+      - MB_PYTHON_VERSION: "3.8"
   install_pre_requirements_script:
     - brew install pkg-config python@3.10
     - ln -s python3 /opt/homebrew/opt/python@3.10/bin/python
