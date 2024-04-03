@@ -313,7 +313,7 @@ function run_tests {
         apt-get install -y ca-certificates
     fi
     cp -R ../Fiona/tests ./tests
-    python -m pip install "shapely;python_version<'3.12'" $TEST_DEPENDS
+    python -m pip install $TEST_DEPENDS
     GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
     fio --version
     fio env --formats
