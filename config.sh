@@ -336,6 +336,7 @@ function build_wheel_cmd {
     fi
     (cd $repo_dir && GDAL_VERSION=3.8.4 $cmd $wheelhouse)
     if [ -n "$IS_OSX" ]; then
+        pip install delocate
         delocate-listdeps --all $wheelhouse/*.whl
     else  # manylinux
         pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
