@@ -110,7 +110,7 @@ function build_tiff {
     if [ -e tiff-stamp ]; then return; fi
     build_zlib
     build_jpeg
-    HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 ensure_xz
+    build_xz
     fetch_unpack https://download.osgeo.org/libtiff/tiff-${TIFF_VERSION}.tar.gz
     (cd tiff-${TIFF_VERSION} \
         && mv VERSION VERSION.txt \
