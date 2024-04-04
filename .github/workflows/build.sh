@@ -3,7 +3,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
   # webp, zstd, xz, libtiff cause a conflict with building webp and libtiff
   # curl from brew requires zstd, use system curl
   # if php is installed, brew tries to reinstall these after installing openblas
-  brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz
+  brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz gettext gif libidn2 libunistring
   brew install pkg-config
   brew deps --tree --installed
 fi
@@ -21,10 +21,6 @@ echo "::group::Install a virtualenv"
   source multibuild/common_utils.sh
   source multibuild/travis_steps.sh
   python3 -m pip install virtualenv
-  echo $LD_LIBRARY_PATH
-  echo $DYLD_LIBRARY_PATH
-  unset LD_LIBRARY_PATH
-  unset DYLD_LIBRARY_PATH
   before_install
 echo "::endgroup::"
 
