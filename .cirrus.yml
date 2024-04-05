@@ -22,7 +22,7 @@ wheel_build_task:
     - brew install pkg-config python@3.10
     - ln -s /opt/homebrew/opt/python@3.10/bin/python3.10 /opt/homebrew/opt/python@3.10/bin/python
   brew_remove_pkgs_script:
-    - brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz gettext giflib libidn2 libunistring
+    - brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz gettext giflib rtmpdump brotli
   build_wheel_script:
     - mkdir -p $BUILD_PREFIX/include
     - mkdir -p $BUILD_PREFIX/lib/pkgconfig

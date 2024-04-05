@@ -177,7 +177,7 @@ function build_curl {
     CXXFLAGS="$CXXFLAGS -g -O2"
     build_openssl
     build_nghttp2
-    local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl"
+    local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl  --without-libidn2"
     #    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
     (cd curl-${CURL_VERSION} \
         && LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BUILD_PREFIX/lib:$BUILD_PREFIX/lib64 ./configure $flags \
@@ -245,6 +245,9 @@ function build_gdal {
         -DGDAL_USE_SFCGAL=OFF \
         -DGDAL_USE_XERCESC=OFF \
         -DGDAL_USE_LIBXML2=OFF \
+        -DGDAL_USE_PCRE2=OFF \
+        -DGDAL_USE_POSTGRESQL=OFF \
+        -DGDAL_USE_ODBC=OFF \
         && $cmake --build . -j4 \
         && $cmake --install .)
     if [ -n "$IS_OSX" ]; then
