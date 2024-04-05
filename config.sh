@@ -110,7 +110,7 @@ function build_tiff {
     if [ -e tiff-stamp ]; then return; fi
     build_zlib
     build_jpeg
-    HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 ensure_xz
+    build_xz
     fetch_unpack https://download.osgeo.org/libtiff/tiff-${TIFF_VERSION}.tar.gz
     (cd tiff-${TIFF_VERSION} \
         && mv VERSION VERSION.txt \
@@ -177,7 +177,7 @@ function build_curl {
     CXXFLAGS="$CXXFLAGS -g -O2"
     build_openssl
     build_nghttp2
-    local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl"
+    local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl  --without-libidn2"
     #    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
     (cd curl-${CURL_VERSION} \
         && LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BUILD_PREFIX/lib:$BUILD_PREFIX/lib64 ./configure $flags \
@@ -245,6 +245,9 @@ function build_gdal {
         -DGDAL_USE_SFCGAL=OFF \
         -DGDAL_USE_XERCESC=OFF \
         -DGDAL_USE_LIBXML2=OFF \
+        -DGDAL_USE_PCRE2=OFF \
+        -DGDAL_USE_POSTGRESQL=OFF \
+        -DGDAL_USE_ODBC=OFF \
         && $cmake --build . -j4 \
         && $cmake --install .)
     if [ -n "$IS_OSX" ]; then
@@ -313,7 +316,7 @@ function run_tests {
         apt-get install -y ca-certificates
     fi
     cp -R ../Fiona/tests ./tests
-    python -m pip install "shapely;python_version<'3.12'" $TEST_DEPENDS
+    python -m pip install $TEST_DEPENDS
     GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
     fio --version
     fio env --formats
@@ -334,9 +337,10 @@ function build_wheel_cmd {
     if [ -n "$BUILD_DEPENDS" ]; then
         pip install $(pip_opts) $BUILD_DEPENDS
     fi
-    (cd $repo_dir && GDAL_VERSION=3.6.4 $cmd $wheelhouse)
+    (cd $repo_dir && GDAL_VERSION=3.8.4 $cmd $wheelhouse)
     if [ -n "$IS_OSX" ]; then
-	:
+        pip install delocate
+        delocate-listdeps --all --depending $wheelhouse/*.whl
     else  # manylinux
         pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
     fi
