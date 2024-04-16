@@ -31,12 +31,6 @@ wheel_build_task:
     - mkdir -p $BUILD_PREFIX/share/man/man{1,3,5,7}
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
-    - python3 -m pip install virtualenv
-    - which python3
-    - echo $PATH
-    - ls /opt/homebrew/opt/python@3.10/bin
-    - ls /private/tmp/local/bin
-    - which python
     - before_install
     - clean_code $REPO_DIR $BUILD_COMMIT
     - MACOSX_DEPLOYMENT_TARGET=11.0
@@ -46,7 +40,6 @@ wheel_build_task:
   test_wheel_script:
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
-    - python3 -m pip install virtualenv
     - before_install
     - install_run $PLAT
   wheels_artifacts:
