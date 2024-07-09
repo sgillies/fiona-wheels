@@ -248,7 +248,7 @@ function build_gdal {
         -DGDAL_USE_LIBXML2=OFF \
         -DGDAL_USE_PCRE2=ON \
         -DPCRE2_INCLUDE_DIR=$BUILD_PREFIX/include \
-        -DPCRE2_LIBRARY=$BUILD_PREFIX/lib \
+        -DPCRE2-8_LIBRARY=$BUILD_PREFIX/lib \
         -DGDAL_USE_POSTGRESQL=OFF \
         -DGDAL_USE_ODBC=OFF \
         && $cmake --build . -j4 \
