@@ -199,6 +199,7 @@ function build_gdal {
     build_sqlite
     build_expat
     build_geos
+    build_pcre
 
     CFLAGS="$CFLAGS -DPROJ_RENAME_SYMBOLS -g -O2"
     CXXFLAGS="$CXXFLAGS -DPROJ_RENAME_SYMBOLS -DPROJ_INTERNAL_CPP_NAMESPACE -g -O2"
@@ -245,7 +246,9 @@ function build_gdal {
         -DGDAL_USE_SFCGAL=OFF \
         -DGDAL_USE_XERCESC=OFF \
         -DGDAL_USE_LIBXML2=OFF \
-        -DGDAL_USE_PCRE2=OFF \
+        -DGDAL_USE_PCRE2=ON \
+        -DPCRE2_INCLUDE_DIR=$BUILD_PREFIX/include \
+        -DPCRE2_LIBRARY=$BUILD_PREFIX/lib \
         -DGDAL_USE_POSTGRESQL=OFF \
         -DGDAL_USE_ODBC=OFF \
         && $cmake --build . -j4 \
