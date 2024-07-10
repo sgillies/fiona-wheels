@@ -210,10 +210,10 @@ function build_gdal {
 
     if [ -n "$IS_OSX" ]; then
         GEOS_CONFIG="-DGDAL_USE_GEOS=OFF"
-        PCRE2_LIB="/usr/local/lib/libpcre2-8.dylib"
+        PCRE2_LIB="$BUILD_PREFIX/lib/libpcre2-8.dylib"
     else
         GEOS_CONFIG="-DGDAL_USE_GEOS=ON"
-        PCRE2_LIB="/usr/local/lib/libpcre2-8.so"
+        PCRE2_LIB="$BUILD_PREFIX/lib/libpcre2-8.so"
     fi
 
     local cmake=cmake
