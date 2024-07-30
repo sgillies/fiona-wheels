@@ -13,7 +13,6 @@ wheel_build_task:
     TEST_DEPENDS: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
     MACOSX_DEPLOYMENT_TARGET: "11.0"
     matrix:
-      - MB_PYTHON_VERSION: "3.13"
       - MB_PYTHON_VERSION: "3.12"
       - MB_PYTHON_VERSION: "3.11"
       - MB_PYTHON_VERSION: "3.10"
