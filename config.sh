@@ -351,7 +351,7 @@ function build_wheel_cmd {
         pip install delocate
         delocate-listdeps --all --depending $wheelhouse/*.whl
     else  # manylinux
-        pip install -I "git+https://github.com/sgillies/auditwheel.git#egg=auditwheel"
+        pip install -I "auditwheel @ git+https://github.com/sgillies/auditwheel.git@extra-lib-name-tag"
     fi
     repair_wheelhouse $wheelhouse
 }
