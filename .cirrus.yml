@@ -34,6 +34,8 @@ wheel_build_task:
     - source multibuild/travis_steps.sh
     - pre_build
   checkout_fiona_script:
+    - source multibuild/common_utils.sh
+    - source multibuild/travis_steps.sh
     - clean_code ${REPO_DIR} ${BUILD_COMMIT}
   setup_wheel_build_environment_script:
     - python3 -m venv venv && source venv/bin/activate
