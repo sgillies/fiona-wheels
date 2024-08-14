@@ -12,6 +12,13 @@ wheel_build_task:
     BUILD_DEPENDS: "setuptools cython~=3.0.2 wheel"
     TEST_DEPENDS: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
     MACOSX_DEPLOYMENT_TARGET: "11.0"
+    GDAL_CONFIG: $BUILD_PREFIX/bin/gdal-config
+    PROJ_DATA: $BUILD_PREFIX/share/proj
+    CIBW_PRERELEASE_PYTHONS: True
+    CIBW_ARCH: $PLAT
+    CIBW_SKIP: pp*
+    CIBW_TEST_REQUIRES: $TEST_DEPENDS
+    CIBW_TEST_COMMAND: "cp -R {package}/tests tests && GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k 'not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]'"
 
   install_pre_requirements_script:
     - brew install pkg-config python@3.10
@@ -28,16 +35,9 @@ wheel_build_task:
     - source multibuild/travis_steps.sh
     - clean_code $REPO_DIR $BUILD_COMMIT
     - pre_build
-    - MACOSX_DEPLOYMENT_TARGET=11.0
-    - GDAL_CONFIG=$BUILD_PREFIX/bin/gdal-config
-    - PROJ_DATA=$BUILD_PREFIX/share/proj
-    - CIBW_PRERELEASE_PYTHONS=True
-    - CIBW_ARCH=$PLAT
     - python3 -m venv venv && source venv/bin/activate
     - python -m pip install --upgrade pip
     - python -m pip install cibuildwheel==2.20.0
-    - ls -l
-    - cd Fiona
-    - python -m cibuildwheel --output-dir wheelhouse
+    - python -m cibuildwheel --output-dir wheelhouse Fiona
   wheels_artifacts:
     path: "wheelhouse/*.whl"
