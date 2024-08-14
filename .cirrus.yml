@@ -12,12 +12,12 @@ wheel_build_task:
     BUILD_DEPENDS: "setuptools cython~=3.0.2 wheel"
     TEST_DEPENDS: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
     MACOSX_DEPLOYMENT_TARGET: "11.0"
-    GDAL_CONFIG: $BUILD_PREFIX/bin/gdal-config
-    PROJ_DATA: $BUILD_PREFIX/share/proj
+    GDAL_CONFIG: /private/tmp/local/bin/gdal-config
+    PROJ_DATA: /private/tmp/local/share/proj
     CIBW_PRERELEASE_PYTHONS: True
-    CIBW_ARCH: $PLAT
-    CIBW_SKIP: pp*
-    CIBW_TEST_REQUIRES: $TEST_DEPENDS
+    CIBW_ARCH: arm64
+    CIBW_SKIP: "pp*"
+    CIBW_TEST_REQUIRES: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
     CIBW_TEST_COMMAND: "cp -R {package}/tests tests && GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k 'not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]'"
 
   install_pre_requirements_script:
