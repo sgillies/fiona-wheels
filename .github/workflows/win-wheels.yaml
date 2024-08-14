@@ -1,11 +1,11 @@
 
 ---
-name: Windows wheels
+name: PyPI wheels
 
 on: [push, pull_request, workflow_dispatch]
 
 env:
-  REF: rel-1.10b3
+  REF: rel-1.10.0
 
 # cancel running jobs on new commit to PR
 concurrency:
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-wheels-win:
+  build-wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:

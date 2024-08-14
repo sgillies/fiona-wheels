@@ -12,12 +12,7 @@ wheel_build_task:
     BUILD_DEPENDS: "setuptools cython~=3.0.2 wheel"
     TEST_DEPENDS: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
     MACOSX_DEPLOYMENT_TARGET: "11.0"
-    matrix:
-      - MB_PYTHON_VERSION: "3.12"
-      - MB_PYTHON_VERSION: "3.11"
-      - MB_PYTHON_VERSION: "3.10"
-      - MB_PYTHON_VERSION: "3.9"
-      - MB_PYTHON_VERSION: "3.8"
+
   install_pre_requirements_script:
     - brew install pkg-config python@3.10
     - ln -s /opt/homebrew/opt/python@3.10/bin/python3.10 /opt/homebrew/opt/python@3.10/bin/python
@@ -36,11 +31,10 @@ wheel_build_task:
     - MACOSX_DEPLOYMENT_TARGET=11.0
     - GDAL_CONFIG=$BUILD_PREFIX/bin/gdal-config
     - PROJ_DATA=$BUILD_PREFIX/share/proj
-    - build_wheel $REPO_DIR $PLAT
-  test_wheel_script:
-    - source multibuild/common_utils.sh
-    - source multibuild/travis_steps.sh
-    - before_install
-    - install_run $PLAT
+    - CIBW_PRERELEASE_PYTHONS=True
+    - CIBW_ARCH=$PLAT
+    - python3 -m pip install --upgrade pip
+    - python3 -m pip install cibuildwheel==2.20.0
+    - python3 -m cibuildwheel --output-dir wheelhouse
   wheels_artifacts:
     path: "wheelhouse/*.whl"
