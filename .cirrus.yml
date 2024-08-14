@@ -7,15 +7,14 @@ wheel_build_task:
     REPO_DIR: Fiona
     BUILD_COMMIT: rel-1.10.0
     CIRRUS_CLONE_SUBMODULES: true
-    PATH: /opt/homebrew/opt/python@3.10/bin:$PATH
+    PATH: ${BUILD_PREFIX}/bin:/opt/homebrew/opt/python@3.10/bin:${PATH}
     PLAT: "arm64"
     BUILD_DEPENDS: "setuptools cython~=3.0.2 wheel"
     TEST_DEPENDS: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
     MACOSX_DEPLOYMENT_TARGET: "11.0"
-    GDAL_CONFIG: /private/tmp/local/bin/gdal-config
-    PROJ_DATA: /private/tmp/local/share/proj
+    PROJ_DATA: ${BUILD_PREFIX}/share/proj
     CIBW_PRERELEASE_PYTHONS: True
-    CIBW_ARCH: arm64
+    CIBW_ARCH: ${PLAT}
     CIBW_SKIP: "pp*"
     CIBW_TEST_REQUIRES: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
     CIBW_TEST_COMMAND: "cp -R {package}/tests tests && GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k 'not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]'"
@@ -25,19 +24,22 @@ wheel_build_task:
     - ln -s /opt/homebrew/opt/python@3.10/bin/python3.10 /opt/homebrew/opt/python@3.10/bin/python
   brew_remove_pkgs_script:
     - brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz gettext giflib rtmpdump brotli
-  build_wheel_script:
-    - mkdir -p $BUILD_PREFIX/include
-    - mkdir -p $BUILD_PREFIX/lib/pkgconfig
-    - mkdir -p $BUILD_PREFIX/bin
-    - mkdir -p $BUILD_PREFIX/share/doc
-    - mkdir -p $BUILD_PREFIX/share/man/man{1,3,5,7}
+  build_wheel_dependencies_script:
+    - mkdir -p ${BUILD_PREFIX}/include
+    - mkdir -p ${BUILD_PREFIX}/lib/pkgconfig
+    - mkdir -p ${BUILD_PREFIX}/bin
+    - mkdir -p ${BUILD_PREFIX}/share/doc
+    - mkdir -p ${BUILD_PREFIX}/share/man/man{1,3,5,7}
     - source multibuild/common_utils.sh
     - source multibuild/travis_steps.sh
-    - clean_code $REPO_DIR $BUILD_COMMIT
     - pre_build
+  checkout_fiona_script:
+    - clean_code ${REPO_DIR} ${BUILD_COMMIT}
+  setup_wheel_build_environment_script:
     - python3 -m venv venv && source venv/bin/activate
     - python -m pip install --upgrade pip
     - python -m pip install cibuildwheel==2.20.0
+  build_wheels_script:
     - python -m cibuildwheel --output-dir wheelhouse Fiona
   wheels_artifacts:
     path: "wheelhouse/*.whl"
