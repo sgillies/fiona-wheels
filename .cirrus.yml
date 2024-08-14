@@ -36,6 +36,8 @@ wheel_build_task:
     - python3 -m venv venv && source venv/bin/activate
     - python -m pip install --upgrade pip
     - python -m pip install cibuildwheel==2.20.0
+    - ls -l
+    - cd Fiona
     - python -m cibuildwheel --output-dir wheelhouse
   wheels_artifacts:
     path: "wheelhouse/*.whl"
