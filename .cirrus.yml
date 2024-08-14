@@ -8,6 +8,8 @@ wheel_build_task:
     BUILD_COMMIT: rel-1.10.0
     CIRRUS_CLONE_SUBMODULES: true
     PATH: ${BUILD_PREFIX}/bin:/opt/homebrew/opt/python@3.10/bin:${PATH}
+    LD_LIBRARY_PATH: ${BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}
+    DYLD_LIBRARY_PATH: ${LD_LIBRARY_PATH}
     PLAT: "arm64"
     BUILD_DEPENDS: "setuptools cython~=3.0.2 wheel"
     TEST_DEPENDS: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
