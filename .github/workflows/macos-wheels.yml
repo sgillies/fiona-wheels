@@ -1,0 +1,97 @@
+name: macOS wheels
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  REPO_DIR: Fiona
+  BUILD_COMMIT: rel-1.10.0
+  BUILD_PREFIX: /private/tmp/local
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-macos-wheels:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "macOS x86_64"
+            os: macos-13
+            cibw_arch: x86_64
+            macosx_deployment_target: "10.10"
+          - name: "macOS arm64"
+            os: macos-14
+            cibw_arch: arm64
+            macosx_deployment_target: "11.0"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Remove homebrew packages
+        if: ${{ startsWith(matrix.os, "macos") }}
+        run: |
+          brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz gettext giflib rtmpdump brotli
+
+      - name: Make dependency build directories
+        run: |
+          mkdir -p ${BUILD_PREFIX}/include
+          mkdir -p ${BUILD_PREFIX}/lib/pkgconfig
+          mkdir -p ${BUILD_PREFIX}/bin
+          mkdir -p ${BUILD_PREFIX}/share/doc
+          mkdir -p ${BUILD_PREFIX}/share/man/man{1,3,5,7}
+
+      - name: Build dependencies
+        shell: bash
+        run: |
+          source multibuild/common_utils.sh
+          source multibuild/travis_steps.sh
+          pre_build
+        env:
+          PATH: ${{ env.BUILD_PREFIX}/bin:${PATH}
+          LD_LIBRARY_PATH: ${BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}
+          DYLD_LIBRARY_PATH: ${LD_LIBRARY_PATH}
+          PLAT: ${{ matrix.platform }}
+          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
+          PROJ_DATA: ${BUILD_PREFIX}/share/proj
+
+      - name: Checkout Fiona
+        shell: bash
+        run: |
+          source multibuild/common_utils.sh
+          source multibuild/travis_steps.sh
+          clean_code ${REPO_DIR} ${BUILD_COMMIT}
+
+      - name: Install cibuildwheel
+        run: |
+          python3 -m pip install cibuildwheel==2.20.0
+
+      - name: Build wheels
+        run: |
+          python3 -m cibuildwheel --output-dir wheelhouse Fiona
+        env:
+          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
+          CIBW_ARCHS: ${{ matrix.cibw_arch }}
+          CIBW_BUILD: ${{ matrix.build }}
+          CIBW_SKIP: pp*
+          CIBW_FREE_THREADED_SUPPORT: True
+          CIBW_PRERELEASE_PYTHONS: True
+          CIBW_TEST_REQUIRES: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
+          CIBW_TEST_COMMAND: "cp -R {package}/tests tests && GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k 'not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]'"
+          CIBW_REPAIR_WHEEL_COMMAND: DYLD_LIBRARY_PATH=${{ env.BUILD_PREFIX }}/lib:${DYLD_LIBRARY_PATH} delocate-wheel --require-archs {delocate_archs} -w {dest_dir} {wheel}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.os }}-${{ matrix.cibw_arch }}${{ matrix.manylinux && format('-{0}', matrix.manylinux) }}
+          path: ./wheelhouse/*.whl
+
