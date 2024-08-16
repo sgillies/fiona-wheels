@@ -57,10 +57,9 @@ jobs:
           source multibuild/travis_steps.sh
           pre_build
         env:
-          PATH: ${{ env.BUILD_PREFIX }}/bin:${PATH}
           LD_LIBRARY_PATH: ${BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}
           DYLD_LIBRARY_PATH: ${LD_LIBRARY_PATH}
-          PLAT: ${{ matrix.platform }}
+          PLAT: ${{ matrix.cibw_arch }}
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
           PROJ_DATA: ${BUILD_PREFIX}/share/proj
 
@@ -79,6 +78,7 @@ jobs:
         run: |
           python3 -m cibuildwheel --output-dir wheelhouse Fiona
         env:
+          PATH: ${BUILD_PREFIX}/bin:${PATH}
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
           CIBW_ARCHS: ${{ matrix.cibw_arch }}
           CIBW_BUILD: ${{ matrix.build }}
