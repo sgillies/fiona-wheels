@@ -57,7 +57,7 @@ jobs:
           source multibuild/travis_steps.sh
           pre_build
         env:
-          PATH: ${{ env.BUILD_PREFIX}/bin:${PATH}
+          PATH: ${{ env.BUILD_PREFIX }}/bin:${PATH}
           LD_LIBRARY_PATH: ${BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}
           DYLD_LIBRARY_PATH: ${LD_LIBRARY_PATH}
           PLAT: ${{ matrix.platform }}
