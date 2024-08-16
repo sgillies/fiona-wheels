@@ -55,6 +55,7 @@ jobs:
         run: |
           source multibuild/common_utils.sh
           source multibuild/library_builders.sh
+          source config.sh
           pre_build
         env:
           LD_LIBRARY_PATH: ${BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}
