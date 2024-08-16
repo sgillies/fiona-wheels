@@ -39,7 +39,6 @@ jobs:
           python-version: "3.x"
 
       - name: Remove homebrew packages
-        if: ${{ startsWith(matrix.os, "macos") }}
         run: |
           brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz gettext giflib rtmpdump brotli
 
