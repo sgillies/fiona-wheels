@@ -1,7 +1,7 @@
 wheel_build_task:
   name: Build Rasterio wheels for Mac ARM64.
   macos_instance:
-    image: ghcr.io/cirruslabs/macos-monterey-xcode
+    image: ghcr.io/cirruslabs/macos-sonoma-xcode
   env:
     BUILD_PREFIX: /private/tmp/local
     REPO_DIR: Fiona
@@ -46,6 +46,8 @@ wheel_build_task:
     - python -m pip install cibuildwheel==2.20.0
   build_wheels_script:
     - source venv/bin/activate
+    - printenv | sort
+    - pwd
     - python -m cibuildwheel --output-dir wheelhouse Fiona
   wheels_artifacts:
     path: "wheelhouse/*.whl"
