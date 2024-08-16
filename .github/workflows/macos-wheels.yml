@@ -54,7 +54,7 @@ jobs:
         shell: bash
         run: |
           source multibuild/common_utils.sh
-          source multibuild/travis_steps.sh
+          source multibuild/library_builders.sh
           pre_build
         env:
           LD_LIBRARY_PATH: ${BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}
@@ -67,7 +67,7 @@ jobs:
         shell: bash
         run: |
           source multibuild/common_utils.sh
-          source multibuild/travis_steps.sh
+          source multibuild/library_builders.sh
           clean_code ${REPO_DIR} ${BUILD_COMMIT}
 
       - name: Install cibuildwheel
