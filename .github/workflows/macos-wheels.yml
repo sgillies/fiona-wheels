@@ -64,9 +64,9 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
           PROJ_DATA: ${BUILD_PREFIX}/share/proj
 
-      - name: Reinstall git
+      - name: Reinstall brew packages
         run: |
-          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install git
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install gettext pcre2
 
       - name: Checkout Fiona
         shell: bash
