@@ -64,15 +64,15 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
           PROJ_DATA: ${BUILD_PREFIX}/share/proj
 
-      - name: Reinstall gettext
+      - name: Reinstall git
         run: |
-          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install gettext
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install git
 
       - name: Checkout Fiona
         shell: bash
         run: |
           cd ${REPO_DIR}
-          git fetch origin ${BUILD_COMMIT}
+          git fetch origin --tags
           git checkout ${BUILD_COMMIT}
           git clean -fxd
           git reset --hard
