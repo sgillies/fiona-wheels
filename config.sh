@@ -14,7 +14,7 @@ CURL_VERSION=8.8.0
 NGHTTP2_VERSION=1.46.0
 EXPAT_VERSION=2.2.6
 TIFF_VERSION=4.3.0
-OPENSSL_DOWNLOAD_URL=https://www.openssl.org/source/
+OPENSSL_DOWNLOAD_URL=https://www.openssl.org/sourcel/
 OPENSSL_ROOT=openssl-1.1.1w
 OPENSSL_HASH=cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8
 PCRE_VERSION=10.44
@@ -194,8 +194,8 @@ function build_curl {
     CXXFLAGS="$CXXFLAGS -g -O2"
     build_openssl
     build_nghttp2
-    local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl  --without-libidn2"
-    #    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
+    local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl --without-libidn2"
+    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
     (cd curl-${CURL_VERSION} \
         && LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BUILD_PREFIX/lib:$BUILD_PREFIX/lib64 ./configure $flags \
         && make -j4 \
