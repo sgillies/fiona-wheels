@@ -66,7 +66,7 @@ jobs:
 
       - name: Reinstall brew packages
         run: |
-          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install gettext pcre2
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1 brew install gettext pcre2 pkgutil
 
       - name: Checkout Fiona
         shell: bash
