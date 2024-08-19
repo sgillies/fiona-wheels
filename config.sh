@@ -195,7 +195,7 @@ function build_curl {
     build_openssl
     build_nghttp2
     local flags="--prefix=$BUILD_PREFIX --with-nghttp2=$BUILD_PREFIX --with-libz --with-ssl --without-libidn2"
-    fetch_unpack https://curl.haxx.se/download/curl-${CURL_VERSION}.tar.gz
+    # Curl is already fetched and unpacked.
     (cd curl-${CURL_VERSION} \
         && LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$BUILD_PREFIX/lib:$BUILD_PREFIX/lib64 ./configure $flags \
         && make -j4 \
