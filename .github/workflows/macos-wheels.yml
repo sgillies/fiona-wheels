@@ -72,6 +72,7 @@ jobs:
         shell: bash
         run: |
           cd ${REPO_DIR}
+          git fetch origin
           git fetch origin --tags
           git checkout ${BUILD_COMMIT}
           git clean -fxd
@@ -80,6 +81,10 @@ jobs:
       - name: Install cibuildwheel
         run: |
           python3 -m pip install cibuildwheel==2.20.0
+
+      - name: Remove homebrew packages
+        run: |
+          brew remove -f --ignore-dependencies liblerc webp zstd libtiff libxcb libxdcmp curl php lcms2 xmlto ghostscript lz4 openjpeg xz gettext giflib rtmpdump brotli
 
       - name: Build wheels
         run: |
