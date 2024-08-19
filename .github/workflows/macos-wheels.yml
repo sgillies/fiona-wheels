@@ -97,7 +97,7 @@ jobs:
           CIBW_FREE_THREADED_SUPPORT: True
           CIBW_PRERELEASE_PYTHONS: True
           CIBW_TEST_REQUIRES: "attrs pytest click mock boto3 packaging hypothesis wheel pytz fsspec aiohttp requests pyparsing shapely"
-          CIBW_TEST_COMMAND: "cp -R {package}/tests tests && GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k 'not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]'"
+          CIBW_TEST_COMMAND: "cp -R {package}/tests tests && unset GDAL_DATA && unset PROJ_DATA && GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k 'not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]'"
           CIBW_REPAIR_WHEEL_COMMAND: DYLD_LIBRARY_PATH=${{ env.BUILD_PREFIX }}/lib:${DYLD_LIBRARY_PATH} delocate-wheel --require-archs {delocate_archs} -w {dest_dir} {wheel}
 
       - uses: actions/upload-artifact@v4
