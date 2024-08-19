@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           cd ${REPO_DIR}
-          git fetch origin --all --tags
+          git fetch origin ${BUILD_COMMIT}
           git checkout ${BUILD_COMMIT}
           git clean -fxd
           git reset --hard
