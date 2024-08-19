@@ -72,9 +72,9 @@ jobs:
         shell: bash
         run: |
           cd ${REPO_DIR}
-          git fetch origin --all
+          git fetch origin
           git fetch origin --tags
-          git branch
+          git branch --list
           git checkout ${BUILD_COMMIT}
           git clean -fxd
           git reset --hard
