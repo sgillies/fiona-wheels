@@ -58,11 +58,11 @@ jobs:
           source config.sh
           pre_build
         env:
-          LD_LIBRARY_PATH: ${BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}
+          LD_LIBRARY_PATH: ${{ env.BUILD_PREFIX }}/lib:${LD_LIBRARY_PATH}
           DYLD_LIBRARY_PATH: ${LD_LIBRARY_PATH}
           PLAT: ${{ matrix.cibw_arch }}
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
-          PROJ_DATA: ${BUILD_PREFIX}/share/proj
+          PROJ_DATA: ${{ env.BUILD_PREFIX }}/share/proj
 
       - name: Reinstall brew packages
         run: |
@@ -88,7 +88,7 @@ jobs:
         run: |
           python3 -m cibuildwheel --output-dir wheelhouse Fiona
         env:
-          GDAL_CONFIG: ${BUILD_PREFIX}/bin/gdal-config
+          GDAL_CONFIG: ${{ env.BUILD_PREFIX }}/bin/gdal-config
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
           CIBW_ARCHS: ${{ matrix.cibw_arch }}
           CIBW_BUILD: ${{ matrix.build }}
