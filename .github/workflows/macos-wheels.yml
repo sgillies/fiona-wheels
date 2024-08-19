@@ -88,7 +88,7 @@ jobs:
         run: |
           python3 -m cibuildwheel --output-dir wheelhouse Fiona
         env:
-          PATH: ${BUILD_PREFIX}/bin:${PATH}
+          GDAL_CONFIG: ${BUILD_PREFIX}/bin/gdal-config
           MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
           CIBW_ARCHS: ${{ matrix.cibw_arch }}
           CIBW_BUILD: ${{ matrix.build }}
