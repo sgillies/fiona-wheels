@@ -67,9 +67,11 @@ jobs:
       - name: Checkout Fiona
         shell: bash
         run: |
-          source multibuild/common_utils.sh
-          source multibuild/library_builders.sh
-          clean_code ${REPO_DIR} ${BUILD_COMMIT}
+          cd ${REPO_DIR}
+          git fetch origin --tags
+          git checkout ${BUILD_COMMIT}
+          git clean -fxd
+          git reset --hard
 
       - name: Install cibuildwheel
         run: |
