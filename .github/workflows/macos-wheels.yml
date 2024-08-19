@@ -71,13 +71,10 @@ jobs:
       - name: Checkout Fiona
         shell: bash
         run: |
+          rm -rf ${REPO_DIR}
+          git clone --depth 1 --branch ${BUILD_COMMIT} https://github.com/Toblerity/Fiona.git ${REPO_DIR}
           cd ${REPO_DIR}
-          git fetch origin
-          git fetch origin --tags
-          git branch --list
           git checkout ${BUILD_COMMIT}
-          git clean -fxd
-          git reset --hard
 
       - name: Install cibuildwheel
         run: |
