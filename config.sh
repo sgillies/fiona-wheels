@@ -310,38 +310,44 @@ function pre_build {
 }
 
 
-function run_tests {
+function install_run {
     if [ -n "$IS_OSX" ]; then
-        unset GDAL_DATA
-        unset PROJ_DATA
-        export PATH=$PATH:${BUILD_PREFIX}/bin
-        export LC_ALL=en_US.UTF-8
-        export LANG=en_US.UTF-8
-        cp -R ../Fiona/tests ./tests
-        python -m pip install $TEST_DEPENDS
-        GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
-        fio --version
-        fio env --formats
-        python ../test_fiona_issue383.py
+        install_wheel
+        mkdir tmp_for_test
+        (cd tmp_for_test && run_tests)
+        rmdir tmp_for_test  2>/dev/null || echo "Cannot remove tmp_for_test"
     else
         if [ "${MB_PYTHON_VERSION}" != "3.13" ]; then
-            unset GDAL_DATA
-            unset PROJ_DATA
-            export LC_ALL=C.UTF-8
-            export LANG=C.UTF-8
-            export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
-            apt-get update
-            apt-get install -y ca-certificates
-            cp -R ../Fiona/tests ./tests
-            python -m pip install $TEST_DEPENDS
-            GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
-            fio --version
-            fio env --formats
-            python ../test_fiona_issue383.py
+            install_wheel
+            mkdir tmp_for_test
+            (cd tmp_for_test && run_tests)
+            rmdir tmp_for_test  2>/dev/null || echo "Cannot remove tmp_for_test"
         else
             :
         fi
     fi
+}
+
+function run_tests {
+    unset GDAL_DATA
+    unset PROJ_DATA
+    if [ -n "$IS_OSX" ]; then
+        export PATH=$PATH:${BUILD_PREFIX}/bin
+        export LC_ALL=en_US.UTF-8
+        export LANG=en_US.UTF-8
+    else
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+        export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+        apt-get update
+        apt-get install -y ca-certificates
+    fi
+    cp -R ../Fiona/tests ./tests
+    python -m pip install $TEST_DEPENDS
+    GDAL_ENABLE_DEPRECATED_DRIVER_GTM=YES python -m pytest -vv tests -k "not test_collection_zip_http and not test_mask_polygon_triangle and not test_show_versions and not test_append_or_driver_error and not [PCIDSK] and not cannot_append[FlatGeobuf]"
+    fio --version
+    fio env --formats
+    python ../test_fiona_issue383.py
 }
 
 
