@@ -2,5 +2,5 @@
     "name": "fiona",
     "version": "1.10.0",
     "dependencies": [ "gdal" ],
-    "builtin-baseline": "2024.07.12"
+    "builtin-baseline": "1de2026f28ead93ff1773e6e680387643e914ea1"
 }
