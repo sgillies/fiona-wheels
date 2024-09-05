@@ -1,6 +1,13 @@
 Changes
 =======
 
+## 2024-08-21
+
+Library version changes:
+
+* Update GDAL to 3.9.2
+* Update curl to 8.8.0
+
 ## 2023-10-12
 
 Library version changes:
