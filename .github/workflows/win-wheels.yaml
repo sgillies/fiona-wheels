@@ -5,7 +5,7 @@ name: Windows wheels
 on: [push, pull_request, workflow_dispatch]
 
 env:
-  REF: 1.10.0
+  REF: rel-1.10.1
 
 # cancel running jobs on new commit to PR
 concurrency:
@@ -124,7 +124,7 @@ jobs:
           allow-prereleases: true
 
       - name: Download wheels from artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.1.7
         with:
           path: wheelhouse
       - name: Install dependencies and Fiona wheel
