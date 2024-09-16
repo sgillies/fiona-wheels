@@ -124,7 +124,7 @@ jobs:
           allow-prereleases: true
 
       - name: Download wheels from artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.1.7
         with:
           path: wheelhouse
       - name: Install dependencies and Fiona wheel
